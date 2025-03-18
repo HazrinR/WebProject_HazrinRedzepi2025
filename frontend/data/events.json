@@ -1,0 +1,27 @@
+{
+    "events": [
+      {
+        "id": 1,
+        "eventManagerId": 1,
+        "eventName": "Event 1",
+        "eventDate": "2025-04-01T10:00:00Z",
+        "description": "Description for Event 1",
+        "budget": 1000,
+        "isCanceled": false,
+        "createdAt": "2025-03-01T10:00:00Z",
+        "updatedAt": "2025-03-01T10:00:00Z"
+      },
+      {
+        "id": 2,
+        "eventManagerId": 2,
+        "eventName": "Event 2",
+        "eventDate": "2025-04-10T12:00:00Z",
+        "description": "Description for Event 2",
+        "budget": 2000,
+        "isCanceled": false,
+        "createdAt": "2025-03-02T11:00:00Z",
+        "updatedAt": "2025-03-02T11:00:00Z"
+      }
+    ]
+  }
+  

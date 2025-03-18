@@ -1,0 +1,17 @@
+{
+    "name": "user/backend",
+    "autoload": {
+        "psr-4": {
+            "User\\Backend\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "hazrinredzepi",
+            "email": "hazrin.redzepi@stu.ibu.edu.ba"
+        }
+    ],
+    "require": {
+        "flightphp/core": "^3.13"
+    }
+}
