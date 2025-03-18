@@ -1,0 +1,31 @@
+<section class="container mt-5">
+    <div class="card mx-auto" style="max-width: 500px; padding: 20px;">
+        <div class="card-body text-center">
+
+            <!-- prikaz korisnickih podataka -->
+            <h3 id="user-name" style="font-size: 1.8rem; margin-bottom: 15px;">FirstName LastName</h3>
+            <p id="user-email" style="font-size: 1.2rem; margin-bottom: 10px;">user@example.com</p>
+            <p id="user-age" style="font-size: 1.2rem; margin-bottom: 20px;">Age: N/A</p>
+
+            <hr>
+
+            <button class="btn btn-danger w-100" style="padding: 12px;" onclick="logout()">Logout</button>
+        </div>
+    </div>
+</section>
+
+<script>
+    function logout() {
+        window.location.href = "#login"; // salje na login 
+    }
+
+    // funkcija za dinamičko popunjavanje podataka
+    function setUserInfo(firstName, lastName, age, email) {
+        document.getElementById('user-name').textContent = firstName + ' ' + lastName;
+        document.getElementById('user-email').textContent = email;
+        document.getElementById('user-age').textContent = 'Age: ' + age;
+    }
+
+    // primjer kako će se podaci postaviti ovdje kasnije pozvati sa backenda
+    setUserInfo("John", "Doe", 30, "johndoe@example.com");
+</script>
