@@ -56,19 +56,67 @@ var Utils = {
             $(".rowCheckbox").prop("checked", this.checked);
         });
 
-       // button delete za sada samo prikazuje koje su selektovane
-$("#deleteGroupBtn").on("click", function () {
-    let selectedGroups = $(".rowCheckbox:checked").map(function () {
-        return $(this).data("id");
-    }).get();
+        // button delete za sada samo prikazuje koje su selektovane
+        $("#deleteGroupBtn").on("click", function () {
+            let selectedGroups = $(".rowCheckbox:checked").map(function () {
+                return $(this).data("id");
+            }).get();
 
-    if (selectedGroups.length > 0) {
-        alert("Selected IDs for deletion: " + selectedGroups.join(", "));
-    } else {
-        alert("No groups selected.");
-    }
-});
+            if (selectedGroups.length > 0) {
+                alert("Selected IDs for deletion: " + selectedGroups.join(", "));
+            } else {
+                alert("No groups selected.");
+            }
+        });
 
+        // button Edit za popunjavanje modala sa podacima selektovane grupe
+        $("#editGroupBtn").on("click", function () {
+            let selectedGroups = $(".rowCheckbox:checked").map(function () {
+                return $(this).data("id");
+            }).get();
+
+            if (selectedGroups.length === 1) {
+                let groupId = selectedGroups[0];
+                // Fetch the group data (replace this with an API call if needed)
+                let groupRow = $(`#groupsTable tbody tr input[data-id="${groupId}"]`).closest("tr");
+                let groupName = groupRow.find("td:nth-child(3)").text();
+                let groupDescription = groupRow.find("td:nth-child(4)").text();
+
+                // Populate the modal fields
+                $("#editGroupName").val(groupName);
+                $("#editGroupDescription").val(groupDescription);
+
+                // Save the group ID for submission
+                $("#editGroupForm").data("groupId", groupId);
+            } else if (selectedGroups.length === 0) {
+                alert("Please select a group to edit.");
+            } else {
+                alert("Please select only one group to edit.");
+            }
+        });
+
+        $("#editGroupForm").on("submit", function (e) {
+            e.preventDefault();
+
+            let groupId = $(this).data("groupId");
+            let updatedGroup = {
+                name: $("#editGroupName").val(),
+                description: $("#editGroupDescription").val()
+            };
+
+            // Send the updated data to the backend (replace with an API call)
+            console.log("Updating group ID:", groupId, "with data:", updatedGroup);
+
+            // Close the modal
+            $("#editGroupModal").modal("hide");
+
+            // Update the table row (replace this with a table refresh if needed)
+            let groupRow = $(`#groupsTable tbody tr input[data-id="${groupId}"]`).closest("tr");
+            groupRow.find("td:nth-child(3)").text(updatedGroup.name);
+            groupRow.find("td:nth-child(4)").text(updatedGroup.description);
+
+            alert("Group updated successfully!");
+        });
     },
 
     loadWishesData: () => {
@@ -124,6 +172,55 @@ $("#deleteGroupBtn").on("click", function () {
             } else {
                 alert("No wishes selected.");
             }
+        });
+
+        // button Edit za popunjavanje modala sa podacima selektovane želje
+        $("#editWishBtn").on("click", function () {
+            let selectedWishes = $(".rowCheckbox:checked").map(function () {
+                return $(this).data("id");
+            }).get();
+
+            if (selectedWishes.length === 1) {
+                let wishId = selectedWishes[0];
+                // Fetch the wish data (replace this with an API call if needed)
+                let wishRow = $(`#wishlistTable tbody tr input[data-id="${wishId}"]`).closest("tr");
+                let wishName = wishRow.find("td:nth-child(3)").text();
+                let wishDescription = wishRow.find("td:nth-child(4)").text();
+
+                // Populate the modal fields
+                $("#editWishName").val(wishName);
+                $("#editWishDescription").val(wishDescription);
+
+                // Save the wish ID for submission
+                $("#editWishForm").data("wishId", wishId);
+            } else if (selectedWishes.length === 0) {
+                alert("Please select a wish to edit.");
+            } else {
+                alert("Please select only one wish to edit.");
+            }
+        });
+
+        $("#editWishForm").on("submit", function (e) {
+            e.preventDefault();
+
+            let wishId = $(this).data("wishId");
+            let updatedWish = {
+                wishName: $("#editWishName").val(),
+                description: $("#editWishDescription").val()
+            };
+
+            // Send the updated data to the backend (replace with an API call)
+            console.log("Updating wish ID:", wishId, "with data:", updatedWish);
+
+            // Close the modal
+            $("#editWishModal").modal("hide");
+
+            // Update the table row (replace this with a table refresh if needed)
+            let wishRow = $(`#wishlistTable tbody tr input[data-id="${wishId}"]`).closest("tr");
+            wishRow.find("td:nth-child(3)").text(updatedWish.wishName);
+            wishRow.find("td:nth-child(4)").text(updatedWish.description);
+
+            alert("Wish updated successfully!");
         });
     },
 
@@ -181,11 +278,68 @@ $("#deleteGroupBtn").on("click", function () {
                 alert("No events selected.");
             }
         });
+
+        // button Edit za popunjavanje modala sa podacima selektovanog događaja
+        $("#editEventBtn").on("click", function () {
+            let selectedEvents = $(".rowCheckbox:checked").map(function () {
+                return $(this).data("id");
+            }).get();
+
+            if (selectedEvents.length === 1) {
+                let eventId = selectedEvents[0];
+                // Fetch the event data (replace this with an API call if needed)
+                let eventRow = $(`#eventsTable tbody tr input[data-id="${eventId}"]`).closest("tr");
+                let eventName = eventRow.find("td:nth-child(3)").text();
+                let eventDate = eventRow.find("td:nth-child(4)").text();
+                let eventDescription = eventRow.find("td:nth-child(5)").text();
+                let eventBudget = eventRow.find("td:nth-child(6)").text().replace(" $", "");
+                let isCanceled = eventRow.find("td:nth-child(7)").text() === "On";
+
+                // Populate the modal fields
+                $("#editEventName").val(eventName);
+                $("#editEventDate").val(eventDate);
+                $("#editEventDescription").val(eventDescription);
+                $("#editEventBudget").val(eventBudget);
+                $("#editIsCanceled").prop("checked", isCanceled);
+
+                // Save the event ID for submission
+                $("#editEventForm").data("eventId", eventId);
+            } else if (selectedEvents.length === 0) {
+                alert("Please select an event to edit.");
+            } else {
+                alert("Please select only one event to edit.");
+            }
+        });
+
+        $("#editEventForm").on("submit", function (e) {
+            e.preventDefault();
+
+            let eventId = $(this).data("eventId");
+            let updatedEvent = {
+                eventName: $("#editEventName").val(),
+                eventDate: $("#editEventDate").val(),
+                description: $("#editEventDescription").val(),
+                budget: $("#editEventBudget").val(),
+                isCanceled: $("#editIsCanceled").is(":checked")
+            };
+
+            // Send the updated data to the backend (replace with an API call)
+            console.log("Updating event ID:", eventId, "with data:", updatedEvent);
+
+            // Close the modal
+            $("#editEventModal").modal("hide");
+
+            // Update the table row (replace this with a table refresh if needed)
+            let eventRow = $(`#eventsTable tbody tr input[data-id="${eventId}"]`).closest("tr");
+            eventRow.find("td:nth-child(3)").text(updatedEvent.eventName);
+            eventRow.find("td:nth-child(4)").text(updatedEvent.eventDate);
+            eventRow.find("td:nth-child(5)").text(updatedEvent.description);
+            eventRow.find("td:nth-child(6)").text(`${updatedEvent.budget} $`);
+            eventRow.find("td:nth-child(7)").text(updatedEvent.isCanceled ? "On" : "Off");
+
+            alert("Event updated successfully!");
+        });
     },
-    
-
-
-
 };
 
 
