@@ -6,7 +6,7 @@ class WishDao extends BaseDao {
         parent::__construct("wish");
     }
 
-    // Get all wishes for a specific user
+    // get all wishes for a specific user
     public function getWishesByUserId($userId) {
         $stmt = $this->connection->prepare("SELECT * FROM wish WHERE userId = :userId");
         $stmt->bindParam(':userId', $userId);
@@ -14,7 +14,7 @@ class WishDao extends BaseDao {
         return $stmt->fetchAll();
     }
 
-    // Get all wishes for a specific group
+    // get all wishes for a specific group
     public function getWishesByGroupId($groupId) {
         $stmt = $this->connection->prepare("SELECT * FROM wish WHERE groupId = :groupId");
         $stmt->bindParam(':groupId', $groupId);
@@ -22,7 +22,7 @@ class WishDao extends BaseDao {
         return $stmt->fetchAll();
     }
 
-    // Get all wishes for a specific event
+    // get all wishes for a specific event
     public function getWishesByEventId($eventId) {
         $stmt = $this->connection->prepare("SELECT * FROM wish WHERE eventId = :eventId");
         $stmt->bindParam(':eventId', $eventId);
