@@ -6,7 +6,7 @@ class EventDao extends BaseDao {
         parent::__construct("events");
     }
 
-    // Get all events for a specific group
+    // get all events for a specific group
     public function getEventsByGroup($groupId) {
         $stmt = $this->connection->prepare("SELECT * FROM events WHERE groupId = :groupId");
         $stmt->bindParam(':groupId', $groupId);

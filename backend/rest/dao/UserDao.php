@@ -21,11 +21,11 @@ class UserDao extends BaseDao {
     }
 
     public function authenticateUser($email, $password) {
-        $user = $this->getByEmail($email);
-        if ($user && password_verify($password, $user['password'])) {
-            return $user;
-        }
-        return false;
+        $stmt = $this->connection->prepare("SELECT * FROM users WHERE email = :email AND password = :password");
+        $stmt->bindParam(':email', $email);
+        $stmt->bindParam(':password', $password);
+        $stmt->execute();
+        return $stmt->fetch();
     }
 }
 ?>

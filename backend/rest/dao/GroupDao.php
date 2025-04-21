@@ -6,7 +6,7 @@ class GroupDao extends BaseDao {
         parent::__construct("groups");
     }
 
-    // Get all groups created by a specific user
+    // get all groups created by a specific user
     public function getGroupsByCreator($createdBy) {
         $stmt = $this->connection->prepare("SELECT * FROM groups WHERE createdBy = :createdBy");
         $stmt->bindParam(':createdBy', $createdBy);
@@ -14,7 +14,7 @@ class GroupDao extends BaseDao {
         return $stmt->fetchAll();
     }
 
-    // Search groups by name
+    // search groups by name
     public function searchGroupsByName($name) {
         $stmt = $this->connection->prepare("SELECT * FROM groups WHERE name LIKE :name");
         $name = "%" . $name . "%";
