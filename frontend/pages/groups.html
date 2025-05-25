@@ -130,5 +130,95 @@
     </div>
 </div>
 
+<script>
+$(document).ready(function () {
+  // Load and display groups
+  function loadGroups() {
+    GroupService.getAll(function (groups) {
+      let tbody = $("#groupsTable tbody");
+      tbody.empty();
+      groups.forEach(function (group) {
+        tbody.append(`
+          <tr data-id="${group.id}">
+            <td><input type="checkbox" class="rowCheckbox" data-id="${group.id}"></td>
+            <td>${group.id}</td>
+            <td>${group.name}</td>
+            <td>${group.description}</td>
+            <td>${group.createdBy}</td>
+            <td>${group.createdAt}</td>
+            <td>${group.updatedAt}</td>
+            </tr>
+        `);
+      });
+      if ($.fn.DataTable.isDataTable("#groupsTable")) {
+        $("#groupsTable").DataTable().clear().destroy();
+      }
+      $("#groupsTable").DataTable();
+    });
+  }
+  loadGroups();
 
+  // Add group
+  $("#addGroupForm").on("submit", function (e) {
+    e.preventDefault();
+    let entity = {
+      name: $("#groupName").val(),
+      description: $("#groupDescription").val()
+    };
+    GroupService.create(entity, function () {
+      $("#addModal").modal("hide");
+      loadGroups();
+      toastr.success("Group added!");
+    });
+  });
 
+  // Edit group - open modal with data
+  $("#editGroupBtn").on("click", function () {
+    let selected = $(".rowCheckbox:checked");
+    if (selected.length !== 1) {
+      toastr.warning("Select exactly one group to edit.");
+      return;
+    }
+    let row = selected.closest("tr");
+    $("#editGroupName").val(row.find("td:eq(2)").text());
+    $("#editGroupDescription").val(row.find("td:eq(3)").text());
+    $("#editGroupForm").data("id", row.data("id"));
+  });
+
+  // Edit group - submit changes
+  $("#editGroupForm").on("submit", function (e) {
+    e.preventDefault();
+    let id = $(this).data("id");
+    let entity = {
+      name: $("#editGroupName").val(),
+      description: $("#editGroupDescription").val()
+    };
+    GroupService.update(id, entity, function () {
+      $("#editGroupModal").modal("hide");
+      loadGroups();
+      toastr.success("Group updated!");
+    });
+  });
+
+  // Delete group(s)
+  $("#confirmDelete").on("click", function () {
+    let selected = $(".rowCheckbox:checked");
+    if (selected.length === 0) {
+      toastr.warning("Select at least one group to delete.");
+      return;
+    }
+    let count = 0;
+    selected.each(function () {
+      let id = $(this).data("id");
+      GroupService.delete(id, function () {
+        count++;
+        if (count === selected.length) {
+          $("#deleteModal").modal("hide");
+          loadGroups();
+          toastr.success("Group(s) deleted!");
+        }
+      });
+    });
+  });
+});
+</script>

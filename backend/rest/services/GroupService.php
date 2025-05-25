@@ -53,14 +53,16 @@ class GroupService extends BaseService {
         if (!$group) {
             throw new Exception('Group not found.');
         }
-        if ($group['createdBy'] !== $_SESSION['id']) {
+   
+        $user = Flight::get('user');
+        if (!$user || !isset($user->id) || $group['createdBy'] != $user->id) {
             throw new Exception('Only the creator of the group can update it.');
         }
         if (isset($data['name']) && strlen($data['name']) < 3) {
             throw new Exception('Group name must be at least 3 characters long.');
         }
-        if (isset($data['description']) && strlen($data['description']) > 20) {
-            throw new Exception('Group description must not exceed 20 characters.');
+        if (isset($data['description']) && strlen($data['description']) < 20) {
+            throw new Exception('Group description must exceed 20 characters.');
         }
         return $this->dao->update($id, $data);
     }

@@ -1,11 +1,15 @@
 <?php
 require_once __DIR__ . '/../services/GroupService.php';
+require_once __DIR__ . '/../../data/Roles.php';
 
 /**
  * @OA\Get(
  *     path="/groups",
  *     tags={"Groups"},
  *     summary="Get all groups",
+ *     security={
+ *         {"APIKey": {}}
+ *     },
  *     @OA\Response(
  *         response=200,
  *         description="List of groups"
@@ -17,13 +21,10 @@ require_once __DIR__ . '/../services/GroupService.php';
  * )
  */
 Flight::route('GET /groups', function () {
-    try {
-        $groupService = new GroupService();
-        $groups = $groupService->getAll();
-        Flight::json($groups);
-    } catch (Exception $e) {
-        Flight::json(['error' => $e->getMessage()], 500);
-    }
+    Flight::auth_middleware()->authorizeRoles([Roles::ADMIN, Roles::USER]);
+    $groupService = new GroupService();
+    $groups = $groupService->getAll();
+    Flight::json($groups);
 });
 
 /**
@@ -31,6 +32,9 @@ Flight::route('GET /groups', function () {
  *     path="/groups/{id}",
  *     tags={"Groups"},
  *     summary="Get group by ID",
+ *     security={
+ *         {"APIKey": {}}
+ *     },
  *     @OA\Parameter(
  *         name="id",
  *         in="path",
@@ -49,13 +53,10 @@ Flight::route('GET /groups', function () {
  * )
  */
 Flight::route('GET /groups/@id', function ($id) {
-    try {
-        $groupService = new GroupService();
-        $group = $groupService->getById($id);
-        Flight::json($group);
-    } catch (Exception $e) {
-        Flight::json(['error' => $e->getMessage()], 500);
-    }
+    Flight::auth_middleware()->authorizeRoles([Roles::ADMIN, Roles::USER]);
+    $groupService = new GroupService();
+    $group = $groupService->getById($id);
+    Flight::json($group);
 });
 
 /**
@@ -63,6 +64,9 @@ Flight::route('GET /groups/@id', function ($id) {
  *     path="/groups",
  *     tags={"Groups"},
  *     summary="Create a new group",
+ *     security={
+ *         {"APIKey": {}}
+ *     },
  *     @OA\RequestBody(
  *         required=true,
  *         @OA\JsonContent(
@@ -83,14 +87,11 @@ Flight::route('GET /groups/@id', function ($id) {
  * )
  */
 Flight::route('POST /groups', function () {
-    try {
-        $data = Flight::request()->data->getData();
-        $groupService = new GroupService();
-        $groupId = $groupService->insert($data);
-        Flight::json(['message' => 'Group created', 'group_id' => $groupId]);
-    } catch (Exception $e) {
-        Flight::json(['error' => $e->getMessage()], 400);
-    }
+    Flight::auth_middleware()->authorizeRole(Roles::ADMIN);
+    $data = Flight::request()->data->getData();
+    $data['createdBy'] = Flight::get('user')->id; // Always use authenticated user's ID
+    $group = Flight::group_service()->insert($data);
+    Flight::json(['message' => 'Group created successfully', 'data' => $group], 201);
 });
 
 /**
@@ -98,6 +99,9 @@ Flight::route('POST /groups', function () {
  *     path="/groups/{id}",
  *     tags={"Groups"},
  *     summary="Update an existing group",
+ *     security={
+ *         {"APIKey": {}}
+ *     },
  *     @OA\Parameter(
  *         name="id",
  *         in="path",
@@ -130,6 +134,7 @@ Flight::route('POST /groups', function () {
  * )
  */
 Flight::route('PUT /groups/@id', function ($id) {
+    Flight::auth_middleware()->authorizeRole(Roles::ADMIN);
     try {
         $data = Flight::request()->data->getData();
         $groupService = new GroupService();
@@ -151,6 +156,9 @@ Flight::route('PUT /groups/@id', function ($id) {
  *     path="/groups/{id}",
  *     tags={"Groups"},
  *     summary="Delete a group by ID",
+ *     security={
+ *         {"APIKey": {}}
+ *     },
  *     @OA\Parameter(
  *         name="id",
  *         in="path",
@@ -179,6 +187,7 @@ Flight::route('PUT /groups/@id', function ($id) {
  * )
  */
 Flight::route('DELETE /groups/@id', function ($id) {
+    Flight::auth_middleware()->authorizeRole(Roles::ADMIN);
     try {
         $groupService = new GroupService();
         $groupService->delete($id);
@@ -197,6 +206,9 @@ Flight::route('DELETE /groups/@id', function ($id) {
  *     path="/groups/creator/{createdBy}",
  *     tags={"Groups"},
  *     summary="Get groups by creator",
+ *     security={
+ *         {"APIKey": {}}
+ *     },
  *     @OA\Parameter(
  *         name="createdBy",
  *         in="path",
@@ -215,13 +227,10 @@ Flight::route('DELETE /groups/@id', function ($id) {
  * )
  */
 Flight::route('GET /groups/creator/@createdBy', function ($createdBy) {
-    try {
-        $groupService = new GroupService();
-        $groups = $groupService->getGroupsByCreator($createdBy);
-        Flight::json($groups);
-    } catch (Exception $e) {
-        Flight::json(['error' => $e->getMessage()], 500);
-    }
+    Flight::auth_middleware()->authorizeRoles([Roles::ADMIN, Roles::USER]);
+    $groupService = new GroupService();
+    $groups = $groupService->getGroupsByCreator($createdBy);
+    Flight::json($groups);
 });
 
 /**
@@ -229,6 +238,9 @@ Flight::route('GET /groups/creator/@createdBy', function ($createdBy) {
  *     path="/groups/search/{name}",
  *     tags={"Groups"},
  *     summary="Search groups by name",
+ *     security={
+ *         {"APIKey": {}}
+ *     },
  *     @OA\Parameter(
  *         name="name",
  *         in="path",
@@ -247,12 +259,9 @@ Flight::route('GET /groups/creator/@createdBy', function ($createdBy) {
  * )
  */
 Flight::route('GET /groups/search/@name', function ($name) {
-    try {
-        $groupService = new GroupService();
-        $groups = $groupService->searchGroupsByName($name);
-        Flight::json($groups);
-    } catch (Exception $e) {
-        Flight::json(['error' => $e->getMessage()], 500);
-    }
+    Flight::auth_middleware()->authorizeRoles([Roles::ADMIN, Roles::USER]);
+    $groupService = new GroupService();
+    $groups = $groupService->searchGroupsByName($name);
+    Flight::json($groups);
 });
 ?>

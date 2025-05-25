@@ -135,4 +135,99 @@
     </div>
 </div>
 
+<script>
+$(document).ready(function () {
+  // Load and display wishes
+  function loadWishes() {
+    WishService.getAll(function (wishes) {
+      let tbody = $("#wishlistTable tbody");
+      tbody.empty();
+      wishes.forEach(function (wish) {
+        tbody.append(`
+          <tr data-id="${wish.id}">
+            <td><input type="checkbox" class="rowCheckbox" data-id="${wish.id}"></td>
+            <td>${wish.id}</td>
+            <td>${wish.wishName}</td>
+            <td>${wish.description}</td>
+            <td>${wish.userId}</td>
+            <td>${wish.eventId}</td>
+            <td>${wish.groupId}</td>
+            <td>${wish.createdAt}</td>
+            <td>${wish.updatedAt}</td>
+          </tr>
+        `);
+      });
+      if ($.fn.DataTable.isDataTable("#wishlistTable")) {
+        $("#wishlistTable").DataTable().clear().destroy();
+      }
+      $("#wishlistTable").DataTable();
+    });
+  }
+  loadWishes();
+
+  // Add wish
+  $("#addWishForm").on("submit", function (e) {
+    e.preventDefault();
+    let entity = {
+      wishName: $("#wishName").val(),
+      description: $("#wishDescription").val()
+    };
+    WishService.create(entity, function () {
+      $("#addWishModal").modal("hide");
+      loadWishes();
+      toastr.success("Wish added!");
+    });
+  });
+
+  // Edit wish - open modal with data
+  $("#editWishBtn").on("click", function () {
+    let selected = $(".rowCheckbox:checked");
+    if (selected.length !== 1) {
+      toastr.warning("Select exactly one wish to edit.");
+      return;
+    }
+    let row = selected.closest("tr");
+    $("#editWishName").val(row.find("td:eq(2)").text());
+    $("#editWishDescription").val(row.find("td:eq(3)").text());
+    $("#editWishForm").data("id", row.data("id"));
+  });
+
+  // Edit wish - submit changes
+  $("#editWishForm").on("submit", function (e) {
+    e.preventDefault();
+    let id = $(this).data("id");
+    let entity = {
+      wishName: $("#editWishName").val(),
+      description: $("#editWishDescription").val()
+    };
+    WishService.update(id, entity, function () {
+      $("#editWishModal").modal("hide");
+      loadWishes();
+      toastr.success("Wish updated!");
+    });
+  });
+
+  // Delete wish(es)
+  $("#confirmDeleteWishes").on("click", function () {
+    let selected = $(".rowCheckbox:checked");
+    if (selected.length === 0) {
+      toastr.warning("Select at least one wish to delete.");
+      return;
+    }
+    let count = 0;
+    selected.each(function () {
+      let id = $(this).data("id");
+      WishService.delete(id, function () {
+        count++;
+        if (count === selected.length) {
+          $("#deleteWishModal").modal("hide");
+          loadWishes();
+          toastr.success("Wish(es) deleted!");
+        }
+      });
+    });
+  });
+});
+</script>
+
 

@@ -154,3 +154,107 @@
         </div>
     </div>
 </div>
+
+<script>
+$(document).ready(function () {
+  // Load and display events
+  function loadEvents() {
+    EventService.getAll(function (events) {
+      let tbody = $("#eventsTable tbody");
+      tbody.empty();
+      events.forEach(function (event) {
+        tbody.append(`
+          <tr data-id="${event.id}">
+            <td><input type="checkbox" class="rowCheckbox" data-id="${event.id}"></td>
+            <td>${event.id}</td>
+            <td>${event.eventName}</td>
+            <td>${event.eventDate}</td>
+            <td>${event.description}</td>
+            <td>${event.budget}</td>
+            <td>${event.isCanceled ? 'Yes' : 'No'}</td>
+            <td>${event.createdAt}</td>
+            <td>${event.updatedAt}</td>
+          </tr>
+        `);
+      });
+      if ($.fn.DataTable.isDataTable("#eventsTable")) {
+        $("#eventsTable").DataTable().clear().destroy();
+      }
+      $("#eventsTable").DataTable();
+    });
+  }
+  loadEvents();
+
+  // Add event
+  $("#addEventForm").on("submit", function (e) {
+    e.preventDefault();
+    let entity = {
+      eventName: $("#eventName").val(),
+      eventDate: $("#eventDate").val(),
+      description: $("#eventDescription").val(),
+      budget: $("#eventBudget").val(),
+      isCanceled: $("#isCanceled").is(":checked")
+    };
+    EventService.create(entity, function () {
+      $("#addEventModal").modal("hide");
+      loadEvents();
+      toastr.success("Event added!");
+    });
+  });
+
+  // Edit event - open modal with data
+  $("#editEventBtn").on("click", function () {
+    let selected = $(".rowCheckbox:checked");
+    if (selected.length !== 1) {
+      toastr.warning("Select exactly one event to edit.");
+      return;
+    }
+    let row = selected.closest("tr");
+    $("#editEventName").val(row.find("td:eq(2)").text());
+    $("#editEventDate").val(row.find("td:eq(3)").text());
+    $("#editEventDescription").val(row.find("td:eq(4)").text());
+    $("#editEventBudget").val(row.find("td:eq(5)").text());
+    $("#editIsCanceled").prop("checked", row.find("td:eq(6)").text() === 'Yes');
+    $("#editEventForm").data("id", row.data("id"));
+  });
+
+  // Edit event - submit changes
+  $("#editEventForm").on("submit", function (e) {
+    e.preventDefault();
+    let id = $(this).data("id");
+    let entity = {
+      eventName: $("#editEventName").val(),
+      eventDate: $("#editEventDate").val(),
+      description: $("#editEventDescription").val(),
+      budget: $("#editEventBudget").val(),
+      isCanceled: $("#editIsCanceled").is(":checked")
+    };
+    EventService.update(id, entity, function () {
+      $("#editEventModal").modal("hide");
+      loadEvents();
+      toastr.success("Event updated!");
+    });
+  });
+
+  // Delete event(s)
+  $("#confirmDeleteEvents").on("click", function () {
+    let selected = $(".rowCheckbox:checked");
+    if (selected.length === 0) {
+      toastr.warning("Select at least one event to delete.");
+      return;
+    }
+    let count = 0;
+    selected.each(function () {
+      let id = $(this).data("id");
+      EventService.delete(id, function () {
+        count++;
+        if (count === selected.length) {
+          $("#deleteEventModal").modal("hide");
+          loadEvents();
+          toastr.success("Event(s) deleted!");
+        }
+      });
+    });
+  });
+});
+</script>
