@@ -137,8 +137,6 @@ Flight::route('POST /users', function () {
     Flight::auth_middleware()->authorizeRoles([Roles::ADMIN]);
     try {
         $data = Flight::request()->data->getData();
-        // User creation by admin: do not allow frontend to set role, enforce default or admin logic here if needed
-        // Example: $data['role'] = Roles::USER; // or keep as is if admin can set
         $userService = new UserService();
         $userId = $userService->insert($data);
         Flight::json(['message' => 'User created successfully', 'user_id' => $userId]);

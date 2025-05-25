@@ -55,8 +55,8 @@ class GroupService extends BaseService {
         }
    
         $user = Flight::get('user');
-        if (!$user || !isset($user->id) || $group['createdBy'] != $user->id) {
-            throw new Exception('Only the creator of the group can update it.');
+        if (!$user || !isset($user->id) || ($user->role !== Roles::ADMIN && $group['createdBy'] != $user->id)) {
+            throw new Exception('Only the creator of the group or admin can update it.');
         }
         if (isset($data['name']) && strlen($data['name']) < 3) {
             throw new Exception('Group name must be at least 3 characters long.');

@@ -5,8 +5,8 @@ let RestClient = {
        type: "GET",
        beforeSend: function (xhr) {
          xhr.setRequestHeader(
-           "Authentication",
-           localStorage.getItem("user_token")
+           "Authorization",
+           "Bearer " + localStorage.getItem("user_token")
          );
        },
        success: function (response) {
@@ -23,8 +23,8 @@ let RestClient = {
        type: method,
        beforeSend: function (xhr) {
          xhr.setRequestHeader(
-           "Authentication",
-           localStorage.getItem("user_token")
+           "Authorization",
+            "Bearer " + localStorage.getItem("user_token")
          );
        },
        data: data,

@@ -89,7 +89,7 @@ Flight::route('GET /groups/@id', function ($id) {
 Flight::route('POST /groups', function () {
     Flight::auth_middleware()->authorizeRole(Roles::ADMIN);
     $data = Flight::request()->data->getData();
-    $data['createdBy'] = Flight::get('user')->id; // Always use authenticated user's ID
+    $data['createdBy'] = Flight::get('user')->id; 
     $group = Flight::group_service()->insert($data);
     Flight::json(['message' => 'Group created successfully', 'data' => $group], 201);
 });
@@ -135,6 +135,7 @@ Flight::route('POST /groups', function () {
  */
 Flight::route('PUT /groups/@id', function ($id) {
     Flight::auth_middleware()->authorizeRole(Roles::ADMIN);
+    $user = Flight::get('user');
     try {
         $data = Flight::request()->data->getData();
         $groupService = new GroupService();
