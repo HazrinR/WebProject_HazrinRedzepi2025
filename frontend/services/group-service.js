@@ -1,23 +1,23 @@
 let GroupService = {
   init: function () {
-    // Role-based UI for groups page
+  $(document).ready(function () {
     if (window.location.hash === '#groups' || window.location.pathname.endsWith('groups.html')) {
       const token = localStorage.getItem('user_token');
       let user = null;
+
+      // Sakrij sve dugmiće na početku
+      $("#groups .btn-info, #groups .btn-warning, #groups .btn-danger").hide();
+
       try {
         user = Utils.parseJwt(token)?.user;
       } catch (e) {}
-      // Hide all group action buttons by default
-      setTimeout(function() {
-        if (!user) return;
-        // Admin can see all buttons
-        if (user.role === Constants.ADMIN_ROLE) {
-          $("#groups .btn-info, #groups .btn-warning, #groups .btn-danger").show();
-        } else {
-          $("#groups .btn-info, #groups .btn-warning, #groups .btn-danger").hide();
-        }
-      }, 300);
+
+      // Prikazi dugmiće samo ako je admin
+      if (user && user.role === Constants.ADMIN_ROLE) {
+        $("#groups .btn-info, #groups .btn-warning, #groups .btn-danger").show();
+      }
     }
+  });
 
     $("#addGroupForm").validate({
       submitHandler: function (form) {
