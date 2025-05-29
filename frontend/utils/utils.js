@@ -8,9 +8,9 @@ let Utils = {
         app.route({ view: "register", load: "register.html" });
         app.route({ view: "login", load: "login.html" });
         app.route({ view: "home", load: "home.html" });
-        app.route({ view: "wishlist", load: "wishlist.html", onCreate: Utils.loadWishesData });
-        app.route({ view: "groups", load: "groups.html", onCreate: Utils.loadGroupsData });
-        app.route({ view: "events", load: "events.html", onCreate: Utils.loadEventsData});
+        app.route({ view: "wishlist", load: "wishlist.html" });
+        app.route({ view: "groups", load: "groups.html" });
+        app.route({ view: "events", load: "events.html"});
         app.route({ view: "profile", load: "profile.html" });
 
         app.run();

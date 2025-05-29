@@ -29,84 +29,114 @@
       }</style>
     </head>
     <body>
-        <!-- Responsive navbar-->
-       <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-            <div class="container px-5">
-                <a class="navbar-brand" href="#home">Wishlist App</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                        <li class="nav-item"><a class="nav-link active" aria-current="page" href="#home">Home</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#wishlist">Wishlist</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#groups">Groups</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#events">Events</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#profile">Profile</a></li>
-                        <li class="nav-item"><a class="nav-link" href="login.html" id="logoutButton">Logout</a></li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
+        <!--  Header -->
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm mb-4" style="border-radius:0 0 1rem 1rem; background: linear-gradient(90deg, #f8fafc 0%, #e7e9fc 100%); border-bottom: 2px solid #e0e3f7;">
+    <div class="container px-5">
+        <a class="navbar-brand fw-bold" href="#home" style="color:#4e54c8; font-size:1.7rem; letter-spacing:1px;">
+            <i class="bi bi-stars me-2"></i>Wishlist App
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0" id="menuTabs">
+                <li class="nav-item"><a class="nav-link active" aria-current="page" href="#home">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="#wishlist">Wishlist</a></li>
+                <li class="nav-item"><a class="nav-link" href="#groups">Groups</a></li>
+                <li class="nav-item"><a class="nav-link" href="#events">Events</a></li>
+                <li class="nav-item"><a class="nav-link" href="#profile">Profile</a></li>
+                <li class="nav-item"><a class="nav-link" href="login.html" id="logoutButton">Logout</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
        
         <main id="spapp" role="main">
-            <section id="home" data-load="home.html"></section>
-            <section id="wishlist" data-load="wishlist.html"></section>
-            <section id="groups" data-load="groups.html"></section>
-            <section id="events" data-load="events.html"></section>
-            <section id="profile" data-load="profile.html"></section>
+            
         </main>
       
        
-        <!-- Footer-->
-        <footer class="py-5 bg-dark">
-            <div class="container px-5"><p class="m-0 text-center text-white">Copyright &copy; Wishlist Application 2025</p></div>
-        </footer>
-       
-         <!-- JQuery-->
-           <script src="../frontend/assets/js/jquery-3.7.1.js"></script>
-        <!-- jQuery Validate -->
-           <script src="../frontend/assets/js/jquery.validate.min.js"></script>
-             <!-- Toastr JS -->
-        <script src="../frontend/assets/js/toastr.min.js"></script> 
-            <!-- Bootstrap core JS-->
-        <script src="../frontend/assets/js/bootstrap.bundle.min.js"></script>
-             <!-- jQuery BlockUI -->
-        <script src="../frontend/assets/js/jquery.blockUI.min.js"></script>
-        <!--Datatables-->   
-        <script src="../frontend/assets/js/datatables.min.js"></script>
-      
-         <!--JQuery spapp-->
-        <script src="assets/js/jquery.spapp.min.js"></script>
+        <!-- Footer -->
+<footer class="bg-white text-center text-lg-start shadow-sm mt-5" style="border-radius:1rem 1rem 0 0; background: linear-gradient(90deg, #f8fafc 0%, #e7e9fc 100%); border-top: 2px solid #e0e3f7; font-size: 1.05rem;">
+  <div class="container p-4">
+    <div class="row align-items-center">
+      <div class="col-md-6 text-md-start text-center mb-3 mb-md-0">
+        <span class="fw-bold" style="color:#4e54c8;">Wishlist App</span> &copy; 2025
+      </div>
+      <div class="col-md-6 text-md-end text-center">
+        <a href="#wishlist" class="text-decoration-none me-3" style="color:#4e54c8;"><i class="bi bi-gift"></i> Wishlist</a>
+        <a href="#groups" class="text-decoration-none me-3" style="color:#4e54c8;"><i class="bi bi-people"></i> Groups</a>
+        <a href="#events" class="text-decoration-none me-3" style="color:#4e54c8;"><i class="bi bi-calendar-event"></i> Events</a>
+        <a href="#profile" class="text-decoration-none" style="color:#4e54c8;"><i class="bi bi-person"></i> Profile</a>
+      </div>
+    </div>
+  </div>
+</footer>
 
-        <!-- Aktivacija DataTables -->
-        <!--<script>
-            $(document).ready(function () {
-                $("#eventsTable").DataTable({
-                    "paging": true,         // Omogućava paginaciju
-                    "searching": true,      // Omogućava search bar
-                    "ordering": true,       // Omogućava sortiranje klikom na zaglavlje kolona
-                    "info": true,           // Prikazuje "Showing X of Y entries"
-                    "lengthChange": true    // Omogućava korisniku da bira broj redova po stranici
-                });
-            });
-        </script> -->
-        <!-- moze se dodati i scripts iz js ali jos uvijek je prazan-->
-        <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *-->
-        <!-- * *                               SB Forms JS                               * *-->
-        <!-- * * Activate your form at https://startbootstrap.com/solution/contact-forms * *-->
-        <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-        <script src="https://cdn.startbootstrap.com/sb-forms-latest.js"></script>-->
-        <script src="utils/constants.js"></script>
-        <script src="utils/utils.js"></script>
-        <script src="utils/rest-client.js"></script>
-        <script src="services/user-service.js"></script>
-        <script src="services/group-service.js"></script>
-        <script src="services/event-service.js"></script>
-        <script src="services/wish-service.js"></script>
-        <script>
-            Utils.init_spapp();
-        </script>
-        <script>
-            UserService.generateMenuItems();     
-    </script>
+<style>
+  .navbar-brand i {
+    color: #8f94fb;
+    font-size: 2rem;
+    vertical-align: middle;
+  }
+  .navbar-nav .nav-link {
+    color: #4e54c8 !important;
+    font-size: 1.1rem;
+    margin-right: 0.5rem;
+    transition: color 0.15s;
+  }
+  .navbar-nav .nav-link:hover, .navbar-nav .nav-link.active {
+    color: #8f94fb !important;
+    text-decoration: underline;
+  }
+  footer a {
+    color: #4e54c8;
+    transition: color 0.15s;
+  }
+  footer a:hover {
+    color: #8f94fb;
+    text-decoration: underline;
+  }
+</style>
+      
+
+       <!-- jQuery (must come before anything that depends on it) -->
+<script src="../frontend/assets/js/jquery-3.7.1.js"></script>
+
+<!-- jQuery plugins that depend on jQuery -->
+<script src="../frontend/assets/js/jquery.validate.min.js"></script>
+<script src="../frontend/assets/js/jquery.blockUI.min.js"></script>
+
+<!-- Bootstrap (depends on jQuery) -->
+<script src="../frontend/assets/js/bootstrap.bundle.min.js"></script>
+
+<!-- Toastr (notifications) -->
+<script src="../frontend/assets/js/toastr.min.js"></script>
+
+<!-- DataTables -->
+<script src="../frontend/assets/js/datatables.min.js"></script>
+
+<!-- SPApp core -->
+<script src="assets/js/jquery.spapp.min.js"></script>
+
+<!-- Utils and constants -->
+<script src="utils/constants.js"></script>
+<script src="utils/utils.js"></script>
+
+<!-- Services -->
+<script src="utils/rest-client.js"></script>
+<script src="services/user-service.js"></script>
+<script src="services/group-service.js"></script>
+<script src="services/event-service.js"></script>
+<script src="services/wish-service.js"></script>
+
+<!-- Init SPApp AFTER DOM is ready -->
+<script>
+  $(document).ready(function () {
+    UserService.generateMenuItems();
+    Utils.init_spapp();
+  });
+</script>
+
+            
+      
     </body>
 </html>

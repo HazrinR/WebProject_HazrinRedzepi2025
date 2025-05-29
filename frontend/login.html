@@ -19,25 +19,35 @@
    <!-- Toastr CSS -->
    <link href="../frontend/assets/css/toastr.min.css" rel="stylesheet" />
    <style>
-     html, body {
-         height: 100%;
-         margin: 0;
-         display: flex;
-         flex-direction: column;
-     }
-     main {
-         flex: 1;
-     }
+     body {
+    background: linear-gradient(90deg, #f8fafc 0%, #e7e9fc 100%);
+  }
+  .card {
+    border-radius: 1.5rem;
+  }
+  .btn-primary, .btn-success {
+    background: linear-gradient(90deg, #4e54c8 0%, #8f94fb 100%);
+    border: none;
+  }
+  .btn-primary:hover, .btn-success:hover {
+    background: linear-gradient(90deg, #8f94fb 0%, #4e54c8 100%);
+  }
+  .form-floating > label {
+    color: #4e54c8;
+    font-weight: 500;
+  }
    </style>
  </head>
  <body>
-   <main>
-     <section id="login" class="container mt-5">
-       <div class="row justify-content-center">
-         <div class="col-lg-6">
-           <section class="form-container">
-             <h2 class="text-center mb-4">Login into your account</h2>
-             <form id="login-form" action="#" method="POST">
+   <section class="container d-flex align-items-center justify-content-center min-vh-100" style="background: linear-gradient(90deg, #f8fafc 0%, #e7e9fc 100%);">
+  <div class="card shadow-lg border-0 p-4" style="max-width: 420px; width:100%; border-radius:1.5rem;">
+    <div class="card-body">
+      <div class="text-center mb-4">
+        <i class="bi bi-person-circle display-3 text-primary"></i>
+        <h2 class="fw-bold mb-2" style="color:#4e54c8;">Login</h2>
+        <p class="text-muted">Welcome back! Please login to your account.</p>
+      </div>
+      <form id="login-form" action="#" method="POST">
                <div class="form-floating mb-3">
                  <input class="form-control" id="email" type="email" name="email" placeholder="Enter your email" required>
                  <label for="email">Email</label>
@@ -51,11 +61,10 @@
                </div>
              </form>
              <p class="text-center mt-3">Don't have an account? <a href="register.html">Register here</a></p>
-           </section>
-         </div>
-       </div>
-     </section>
-   </main>
+    </div>
+  </div>
+</section>
+
    <!-- JQuery -->
    <script src="../frontend/assets/js/jquery-3.7.1.js"></script>
    <!-- jQuery Validate -->

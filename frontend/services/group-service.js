@@ -5,14 +5,14 @@ let GroupService = {
       const token = localStorage.getItem('user_token');
       let user = null;
 
-      // Sakrij sve dugmiće na početku
+    
       $("#groups .btn-info, #groups .btn-warning, #groups .btn-danger").hide();
 
       try {
         user = Utils.parseJwt(token)?.user;
       } catch (e) {}
 
-      // Prikazi dugmiće samo ako je admin
+  
       if (user && user.role === Constants.ADMIN_ROLE) {
         $("#groups .btn-info, #groups .btn-warning, #groups .btn-danger").show();
       }
@@ -65,34 +65,65 @@ let GroupService = {
       GroupService.getAllGroups();
       GroupService.closeModal();
     }, function (response) {
+      $.unblockUI(); 
       GroupService.closeModal();
       toastr.error(response.message);
     });
   },
 
   getAllGroups: function () {
+    // Hide both wrappers before rendering
+    $('#groupsCardsWrapper').hide().empty();
+    $('#groupsTableWrapper').hide();
     RestClient.get("groups", function (data) {
-      Utils.datatable(
-        'groups-table',
-        [
-          {
-            data: null,
-            title: '',
-            render: function (data, type, row, meta) {
-              return `<input type="radio" name="group-select" value="${row.id}">`;
+      let role = localStorage.getItem('role') || (Utils.parseJwt(localStorage.getItem('user_token'))?.user?.role || '').toUpperCase();
+      if (role === 'USER') {
+        // Render cards for USER
+        let cardsHtml = '';
+        if (data.length === 0) {
+          cardsHtml = '<div class="col"><div class="alert alert-info">No groups found.</div></div>';
+        } else {
+          cardsHtml = data.map(group => `
+            <div class="col">
+              <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                  <h5 class="card-title">${group.name}</h5>
+                  <p class="card-text mb-1"><strong>Description:</strong> ${group.description}</p>
+                </div>
+              </div>
+            </div>
+          `).join('');
+        }
+        $('#groupsCardsWrapper').html(cardsHtml).show();
+        $('#groupsTableWrapper').hide();
+      } else {
+        // Render table for ADMIN
+        Utils.datatable(
+          'groups-table',
+          [
+            {
+              data: null,
+              title: '',
+              render: function (data, type, row, meta) {
+                return `<input type="radio" name="group-select" value="${row.id}">`;
+              },
+              orderable: false,
+              searchable: false,
+              width: "20px",
             },
-            orderable: false,
-            searchable: false,
-            width: "20px",
-          },
-          { data: 'name', title: 'Group Name' },
-          { data: 'description', title: 'Description' }
-        ],
-        data,
-        10
-      );
+            { data: 'name', title: 'Group Name' },
+            { data: 'description', title: 'Description' }
+          ],
+          data,
+          10
+        );
+        $('#groupsTableWrapper').show();
+        $('#groupsCardsWrapper').hide();
+      }
     }, function (xhr, status, error) {
-      console.error('Error fetching groups:', error);
+      $('#groupsCardsWrapper').hide();
+      $('#groupsTableWrapper').hide();
+      toastr.error('Error fetching groups.');
     });
   },
 
@@ -129,18 +160,11 @@ let GroupService = {
         GroupService.getAllGroups();
       },
       error: function (xhr) {
+        $.unblockUI(); 
         let msg = xhr?.responseJSON?.error || 'Error editing group';
         toastr.error(msg);
-        $.unblockUI();
       }
     });
-  },
-
-  openConfirmationDialog: function (group) {
-    group = JSON.parse(group);
-    $("#deleteStudentModal").modal("show"); // možeš napraviti svoj delete modal za grupe ili koristi isti modal sa drugim id-jem
-    $("#delete-student-body").html("Do you want to delete group: " + group.name + "?");
-    $("#delete_student_id").val(group.id);
   },
 
   deleteSelectedGroups: function () {
@@ -158,10 +182,12 @@ let GroupService = {
     let groupId = $("#delete_group_id").val();
     RestClient.delete('groups/' + groupId, null, function (response) {
       GroupService.closeModal();
+      $('.modal').modal('hide'); 
       toastr.success(response.message);
       GroupService.getAllGroups();
     }, function (response) {
       GroupService.closeModal();
+      $('.modal').modal('hide'); 
       toastr.error(response.message);
     });
   },

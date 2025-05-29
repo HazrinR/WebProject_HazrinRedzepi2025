@@ -33,9 +33,6 @@ class GroupService extends BaseService {
         if (strlen($data['name']) < 3) {
             throw new Exception('Group name must be at least 3 characters long.');
         }
-        if (strlen($data['description']) < 20) {
-            throw new Exception('Group description must exceed 20 characters.');
-        }
         $existingGroup = $this->dao->searchGroupsByName($data['name']);
         foreach ($existingGroup as $group) {
             if ($group['createdBy'] === $_SESSION['id']) {
@@ -60,9 +57,6 @@ class GroupService extends BaseService {
         }
         if (isset($data['name']) && strlen($data['name']) < 3) {
             throw new Exception('Group name must be at least 3 characters long.');
-        }
-        if (isset($data['description']) && strlen($data['description']) < 20) {
-            throw new Exception('Group description must exceed 20 characters.');
         }
         return $this->dao->update($id, $data);
     }
