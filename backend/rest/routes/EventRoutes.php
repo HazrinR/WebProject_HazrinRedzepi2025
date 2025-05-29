@@ -1,11 +1,15 @@
 <?php
 require_once __DIR__ . '/../services/EventService.php';
+require_once __DIR__ . '/../../data/Roles.php';
 
 /**
  * @OA\Get(
  *     path="/events",
  *     tags={"Events"},
  *     summary="Get all events",
+ *     security={
+ *         {"APIKey": {}}
+ *     },
  *     @OA\Response(
  *         response=200,
  *         description="List of events"
@@ -20,6 +24,7 @@ require_once __DIR__ . '/../services/EventService.php';
  * )
  */
 Flight::route('GET /events', function () {
+    Flight::auth_middleware()->authorizeRoles([Roles::ADMIN, Roles::USER]);
     try {
         $eventService = new EventService();
         $events = $eventService->getAll();
@@ -34,6 +39,9 @@ Flight::route('GET /events', function () {
  *     path="/events/{id}",
  *     tags={"Events"},
  *     summary="Get event by ID",
+ *     security={
+ *         {"APIKey": {}}
+ *     },
  *     @OA\Parameter(
  *         name="id",
  *         in="path",
@@ -54,6 +62,7 @@ Flight::route('GET /events', function () {
  * )
  */
 Flight::route('GET /events/@id', function ($id) {
+    Flight::auth_middleware()->authorizeRoles([Roles::ADMIN, Roles::USER]);
     try {
         $eventService = new EventService();
         $event = $eventService->getById($id);
@@ -68,6 +77,9 @@ Flight::route('GET /events/@id', function ($id) {
  *     path="/events",
  *     tags={"Events"},
  *     summary="Create a new event",
+ *     security={
+ *         {"APIKey": {}}
+ *     },
  *     @OA\RequestBody(
  *         required=true,
  *         @OA\JsonContent(
@@ -101,14 +113,14 @@ Flight::route('GET /events/@id', function ($id) {
  * )
  */
 Flight::route('POST /events', function () {
+    Flight::auth_middleware()->authorizeRole(Roles::ADMIN);
     try {
         $data = Flight::request()->data->getData();
-
+        $data['createdBy'] = Flight::get('user')->id; 
         // Validate groupId
         if (empty($data['groupId'])) {
             throw new Exception('Group ID is required.');
         }
-
         $eventService = new EventService();
         $eventId = $eventService->insert($data);
         Flight::json(['message' => 'Event created', 'event_id' => $eventId]);
@@ -122,6 +134,9 @@ Flight::route('POST /events', function () {
  *     path="/events/{id}",
  *     tags={"Events"},
  *     summary="Update an event",
+ *     security={
+ *         {"APIKey": {}}
+ *     },
  *     @OA\Parameter(
  *         name="id",
  *         in="path",
@@ -153,6 +168,7 @@ Flight::route('POST /events', function () {
  * )
  */
 Flight::route('PUT /events/@id', function ($id) {
+    Flight::auth_middleware()->authorizeRole(Roles::ADMIN);
     try {
         $data = Flight::request()->data->getData();
         $eventService = new EventService();
@@ -168,6 +184,9 @@ Flight::route('PUT /events/@id', function ($id) {
  *     path="/events/{id}",
  *     tags={"Events"},
  *     summary="Delete an event",
+ *     security={
+ *         {"APIKey": {}}
+ *     },
  *     @OA\Parameter(
  *         name="id",
  *         in="path",
@@ -206,6 +225,7 @@ Flight::route('PUT /events/@id', function ($id) {
  * )
  */
 Flight::route('DELETE /events/@id', function ($id) {
+    Flight::auth_middleware()->authorizeRole(Roles::ADMIN);
     try {
         $eventService = new EventService();
         $eventService->delete($id);
@@ -224,6 +244,9 @@ Flight::route('DELETE /events/@id', function ($id) {
  *     path="/events/group/{groupId}",
  *     tags={"Events"},
  *     summary="Get events by group ID",
+ *     security={
+ *         {"APIKey": {}}
+ *     },
  *     @OA\Parameter(
  *         name="groupId",
  *         in="path",
@@ -244,6 +267,7 @@ Flight::route('DELETE /events/@id', function ($id) {
  * )
  */
 Flight::route('GET /events/group/@groupId', function ($groupId) {
+    Flight::auth_middleware()->authorizeRoles([Roles::ADMIN, Roles::USER]);
     try {
         $eventService = new EventService();
         $events = $eventService->getEventsByGroup($groupId);

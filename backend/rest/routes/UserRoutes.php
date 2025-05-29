@@ -6,6 +6,9 @@ require_once __DIR__ . '/../services/UserService.php';
  *     path="/users",
  *     tags={"Users"},
  *     summary="Get all users",
+ *     security={
+ *         {"APIKey": {}}
+ *     },
  *     @OA\Response(
  *         response=200,
  *         description="List of users"
@@ -18,6 +21,7 @@ require_once __DIR__ . '/../services/UserService.php';
  * )
  */
 Flight::route('GET /users', function () {
+    Flight::auth_middleware()->authorizeRoles([Roles::ADMIN]);
     try {
         $userService = new UserService();
         $users = $userService->getAll();
@@ -32,6 +36,9 @@ Flight::route('GET /users', function () {
  *     path="/users/{id}",
  *     tags={"Users"},
  *     summary="Get user by ID",
+ *     security={
+ *         {"APIKey": {}}
+ *     },
  *     @OA\Parameter(
  *         name="id",
  *         in="path",
@@ -50,6 +57,7 @@ Flight::route('GET /users', function () {
  * )
  */
 Flight::route('GET /users/@id', function ($id) {
+    Flight::auth_middleware()->authorizeRoles([Roles::ADMIN, Roles::USER]);
     try {
         $userService = new UserService();
         $user = $userService->getById($id);
@@ -64,6 +72,9 @@ Flight::route('GET /users/@id', function ($id) {
  *     path="/users/email/{email}",
  *     summary="Get a user by email",
  *     tags={"Users"},
+ *     security={
+ *         {"APIKey": {}}
+ *     },
  *     @OA\Parameter(
  *         name="email",
  *         in="path",
@@ -83,6 +94,7 @@ Flight::route('GET /users/@id', function ($id) {
  */
 
 Flight::route('GET /users/email/@email', function ($email) {
+    Flight::auth_middleware()->authorizeRoles([Roles::ADMIN]);
     try {
         $userService = new UserService();
         $user = $userService->getUserByEmail($email);
@@ -97,6 +109,9 @@ Flight::route('GET /users/email/@email', function ($email) {
  *     path="/users",
  *     tags={"Users"},
  *     summary="Create a new user",
+ *     security={
+ *         {"APIKey": {}}
+ *     },
  *     @OA\RequestBody(
  *         required=true,
  *         @OA\JsonContent(
@@ -119,6 +134,7 @@ Flight::route('GET /users/email/@email', function ($email) {
  * )
  */
 Flight::route('POST /users', function () {
+    Flight::auth_middleware()->authorizeRoles([Roles::ADMIN]);
     try {
         $data = Flight::request()->data->getData();
         $userService = new UserService();
@@ -134,6 +150,9 @@ Flight::route('POST /users', function () {
  *     path="/users/{id}",
  *     tags={"Users"},
  *     summary="Update an existing user",
+ *     security={
+ *         {"APIKey": {}}
+ *     },
  *     @OA\Parameter(
  *         name="id",
  *         in="path",
@@ -163,13 +182,19 @@ Flight::route('POST /users', function () {
  * )
  */
 Flight::route('PUT /users/@id', function ($id) {
-    try {
-        $data = Flight::request()->data->getData();
-        $userService = new UserService();
-        $userService->update($id, $data);
-        Flight::json(['message' => 'User updated successfully']);
-    } catch (Exception $e) {
-        Flight::json(['error' => $e->getMessage()], 400);
+    Flight::auth_middleware()->authorizeRoles([Roles::ADMIN, Roles::USER]);
+    $user = Flight::get('user');
+    if ($user->role === Roles::ADMIN || ($user->role === Roles::USER && $user->id == $id)) {
+        try {
+            $data = Flight::request()->data->getData();
+            $userService = new UserService();
+            $userService->update($id, $data);
+            Flight::json(['message' => 'User updated successfully']);
+        } catch (Exception $e) {
+            Flight::json(['error' => $e->getMessage()], 400);
+        }
+    } else {
+        Flight::json(['message' => 'Only admins or the user themselves can update this user!'], 403);
     }
 });
 
@@ -178,6 +203,9 @@ Flight::route('PUT /users/@id', function ($id) {
  *     path="/users/{id}",
  *     tags={"Users"},
  *     summary="Delete a user by ID",
+ *     security={
+ *         {"APIKey": {}}
+ *     },
  *     @OA\Parameter(
  *         name="id",
  *         in="path",
@@ -211,16 +239,22 @@ Flight::route('PUT /users/@id', function ($id) {
  * )
  */
 Flight::route('DELETE /users/@id', function ($id) {
-    try {
-        $userService = new UserService();
-        $userService->delete($id);
-        Flight::json(['message' => 'User deleted']);
-    } catch (Exception $e) {
-        if ($e->getMessage() === 'User not found.') {
-            Flight::json(['error' => $e->getMessage()], 404);
-        } else {
-            Flight::json(['error' => $e->getMessage()], 400);
+    Flight::auth_middleware()->authorizeRoles([Roles::ADMIN]);
+    $user = Flight::get('user');
+    if ($user->role === Roles::ADMIN) {
+        try {
+            $userService = new UserService();
+            $userService->delete($id);
+            Flight::json(['message' => 'User deleted']);
+        } catch (Exception $e) {
+            if ($e->getMessage() === 'User not found.') {
+                Flight::json(['error' => $e->getMessage()], 404);
+            } else {
+                Flight::json(['error' => $e->getMessage()], 400);
+            }
         }
+    } else {
+        Flight::json(['message' => 'Only admins have the permission for this operation!'], 403);
     }
 });
 
@@ -256,6 +290,7 @@ Flight::route('DELETE /users/@id', function ($id) {
  * )
  */
 Flight::route('POST /users/authenticate', function () {
+    // No role check needed for authentication
     try {
         $data = Flight::request()->data->getData();
         $email = $data['email'] ?? null;
@@ -283,6 +318,9 @@ Flight::route('POST /users/authenticate', function () {
  *     path="/users/email-exists/{email}",
  *     tags={"Users"},
  *     summary="Check if an email exists",
+ *     security={
+ *         {"APIKey": {}}
+ *     },
  *     @OA\Parameter(
  *         name="email",
  *         in="path",
@@ -304,6 +342,7 @@ Flight::route('POST /users/authenticate', function () {
  * )
  */
 Flight::route('GET /users/email-exists/@email', function ($email) {
+    Flight::auth_middleware()->authorizeRoles([Roles::ADMIN]);
     try {
         $userService = new UserService();
         $exists = $userService->emailExists($email);

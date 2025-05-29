@@ -33,9 +33,6 @@ class WishService extends BaseService {
         if (strlen($data['wishName']) < 3) {
             throw new Exception('Wish name must be at least 3 characters long.');
         }
-        if (strlen($data['description']) < 20) {
-            throw new Exception('Wish description must exceed 20 characters.');
-        }
         if (empty($data['eventId'])) {
             throw new Exception('Event ID is required.');
         }
@@ -74,9 +71,6 @@ class WishService extends BaseService {
         }
         if (isset($data['wishName']) && strlen($data['wishName']) < 3) {
             throw new Exception('Wish name must be at least 3 characters long.');
-        }
-        if (isset($data['description']) && strlen($data['description']) > 20) {
-            throw new Exception('Wish description must not exceed 20 characters.');
         }
         return $this->dao->update($id, $data);
     }

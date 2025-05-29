@@ -11,7 +11,7 @@ class EventService extends BaseService {
     public function getAll() {
         $events = $this->dao->getAll();
         if (empty($events)) {
-            throw new Exception('No events found.');
+            return [];
         }
         return $events;
     }

@@ -1,11 +1,15 @@
 <?php
 require_once __DIR__ . '/../services/WishService.php';
+require_once __DIR__ . '/../../data/Roles.php';
 
 /**
  * @OA\Get(
  *     path="/wishes",
  *     tags={"Wishes"},
  *     summary="Get all wishes",
+ *     security={
+ *         {"APIKey": {}}
+ *     },
  *     @OA\Response(
  *         response=200,
  *         description="List of wishes"
@@ -17,6 +21,7 @@ require_once __DIR__ . '/../services/WishService.php';
  * )
  */
 Flight::route('GET /wishes', function () {
+    Flight::auth_middleware()->authorizeRoles([Roles::ADMIN, Roles::USER]);
     try {
         $wishService = new WishService();
         $wishes = $wishService->getAll();
@@ -31,6 +36,9 @@ Flight::route('GET /wishes', function () {
  *     path="/wishes/{id}",
  *     tags={"Wishes"},
  *     summary="Get wish by ID",
+ *     security={
+ *         {"APIKey": {}}
+ *     },
  *     @OA\Parameter(
  *         name="id",
  *         in="path",
@@ -53,6 +61,7 @@ Flight::route('GET /wishes', function () {
  * )
  */
 Flight::route('GET /wishes/@id', function ($id) {
+    Flight::auth_middleware()->authorizeRoles([Roles::ADMIN, Roles::USER]);
     try {
         $wishService = new WishService();
         $wish = $wishService->getById($id);
@@ -71,6 +80,9 @@ Flight::route('GET /wishes/@id', function ($id) {
  *     path="/wishes",
  *     tags={"Wishes"},
  *     summary="Create a new wish",
+ *     security={
+ *         {"APIKey": {}}
+ *     },
  *     @OA\RequestBody(
  *         required=true,
  *         @OA\JsonContent(
@@ -93,8 +105,10 @@ Flight::route('GET /wishes/@id', function ($id) {
  * )
  */
 Flight::route('POST /wishes', function () {
+    Flight::auth_middleware()->authorizeRole(Roles::ADMIN);
     try {
         $data = Flight::request()->data->getData();
+        $data['userId'] = Flight::get('user')->id; 
         $wishService = new WishService();
         $wishId = $wishService->insert($data);
         Flight::json(['message' => 'Wish created', 'wish_id' => $wishId]);
@@ -108,6 +122,9 @@ Flight::route('POST /wishes', function () {
  *     path="/wishes/{id}",
  *     tags={"Wishes"},
  *     summary="Update a wish",
+ *     security={
+ *         {"APIKey": {}}
+ *     },
  *     @OA\Parameter(
  *         name="id",
  *         in="path",
@@ -138,6 +155,7 @@ Flight::route('POST /wishes', function () {
  * )
  */
 Flight::route('PUT /wishes/@id', function ($id) {
+    Flight::auth_middleware()->authorizeRole(Roles::ADMIN);
     try {
         $data = Flight::request()->data->getData();
         $wishService = new WishService();
@@ -158,6 +176,9 @@ Flight::route('PUT /wishes/@id', function ($id) {
  *     path="/wishes/{id}",
  *     tags={"Wishes"},
  *     summary="Delete a wish",
+ *     security={
+ *         {"APIKey": {}}
+ *     },
  *     @OA\Parameter(
  *         name="id",
  *         in="path",
@@ -180,6 +201,7 @@ Flight::route('PUT /wishes/@id', function ($id) {
  * )
  */
 Flight::route('DELETE /wishes/@id', function ($id) {
+    Flight::auth_middleware()->authorizeRole(Roles::ADMIN);
     try {
         $wishService = new WishService();
         $wishService->delete($id);
@@ -198,6 +220,9 @@ Flight::route('DELETE /wishes/@id', function ($id) {
  *     path="/wishes/user/{userId}",
  *     tags={"Wishes"},
  *     summary="Get wishes by user ID",
+ *     security={
+ *         {"APIKey": {}}
+ *     },
  *     @OA\Parameter(
  *         name="userId",
  *         in="path",
@@ -216,6 +241,7 @@ Flight::route('DELETE /wishes/@id', function ($id) {
  * )
  */
 Flight::route('GET /wishes/user/@userId', function ($userId) {
+    Flight::auth_middleware()->authorizeRoles([Roles::ADMIN, Roles::USER]);
     try {
         $wishService = new WishService();
         $wishes = $wishService->getWishesByUserId($userId);
@@ -230,6 +256,9 @@ Flight::route('GET /wishes/user/@userId', function ($userId) {
  *     path="/wishes/group/{groupId}",
  *     tags={"Wishes"},
  *     summary="Get wishes by group ID",
+ *     security={
+ *         {"APIKey": {}}
+ *     },
  *     @OA\Parameter(
  *         name="groupId",
  *         in="path",
@@ -248,6 +277,7 @@ Flight::route('GET /wishes/user/@userId', function ($userId) {
  * )
  */
 Flight::route('GET /wishes/group/@groupId', function ($groupId) {
+    Flight::auth_middleware()->authorizeRoles([Roles::ADMIN, Roles::USER]);
     try {
         $wishService = new WishService();
         $wishes = $wishService->getWishesByGroupId($groupId);
@@ -262,6 +292,9 @@ Flight::route('GET /wishes/group/@groupId', function ($groupId) {
  *     path="/wishes/event/{eventId}",
  *     tags={"Wishes"},
  *     summary="Get wishes by event ID",
+ *     security={
+ *         {"APIKey": {}}
+ *     },
  *     @OA\Parameter(
  *         name="eventId",
  *         in="path",
@@ -280,6 +313,7 @@ Flight::route('GET /wishes/group/@groupId', function ($groupId) {
  * )
  */
 Flight::route('GET /wishes/event/@eventId', function ($eventId) {
+    Flight::auth_middleware()->authorizeRoles([Roles::ADMIN, Roles::USER]);
     try {
         $wishService = new WishService();
         $wishes = $wishService->getWishesByEventId($eventId);
