@@ -90,6 +90,7 @@ let WishService = {
       WishService.getAllWishes();
       WishService.closeModal();
     }, function (response) {
+      $.unblockUI(); // Always unblock on error
       WishService.closeModal();
       let msg = response?.responseJSON?.error || response?.responseJSON?.message || 'Error adding wish';
       toastr.error(msg);
@@ -97,8 +98,10 @@ let WishService = {
   },
 
   getAllWishes: function () {
+    // Uvek sakrij oba wrappera pre renderovanja
+    $('#wishlistCardsWrapper').hide().empty();
+    $('#wishlistTableWrapper').hide();
     RestClient.get("wishes", function (data) {
-      // Fetch event and group names for display
       RestClient.get('events', function(events) {
         RestClient.get('groups', function(groups) {
           let eventMap = {};
@@ -110,33 +113,64 @@ let WishService = {
             eventName: eventMap[wish.eventId] || '',
             groupName: groupMap[wish.groupId] || ''
           }));
-          Utils.datatable(
-            'wishlistTable',
-            [
-              {
-                data: null,
-                title: '',
-                render: function (data, type, row, meta) {
-                  return `<input type=\"radio\" name=\"wish-select\" value=\"${row.id}\">`;
+          let role = localStorage.getItem('role') || (Utils.parseJwt(localStorage.getItem('user_token'))?.user?.role || '').toUpperCase();
+          if (role === 'USER') {
+            // Render cards for USER
+            let cardsHtml = '';
+            if (tableData.length === 0) {
+              cardsHtml = '<div class="col"><div class="alert alert-info">No wishes found.</div></div>';
+            } else {
+              cardsHtml = tableData.map(wish => `
+                <div class="col">
+                  <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                      <h5 class="card-title">${wish.wishName}</h5>
+                      <p class="card-text mb-1"><strong>Description:</strong> ${wish.description}</p>
+                      <p class="card-text mb-1"><strong>Event:</strong> ${wish.eventName}</p>
+                      <p class="card-text mb-1"><strong>Group:</strong> ${wish.groupName}</p>
+                      <p class="card-text mb-1"><strong>Created:</strong> ${wish.createdAt ? wish.createdAt.split('T')[0] : ''}</p>
+                      <p class="card-text mb-1"><strong>Updated:</strong> ${wish.updatedAt ? wish.updatedAt.split('T')[0] : ''}</p>
+                    </div>
+                  </div>
+                </div>
+              `).join('');
+            }
+            $('#wishlistCardsWrapper').html(cardsHtml).show();
+            $('#wishlistTableWrapper').hide();
+          } else {
+            // Render table for ADMIN
+            Utils.datatable(
+              'wishlistTable',
+              [
+                {
+                  data: null,
+                  title: '',
+                  render: function (data, type, row, meta) {
+                    return `<input type=\"radio\" name=\"wish-select\" value=\"${row.id}\">`;
+                  },
+                  orderable: false,
+                  searchable: false,
+                  width: "20px",
                 },
-                orderable: false,
-                searchable: false,
-                width: "20px",
-              },
-              { data: 'wishName', title: 'Wish Name' },
-              { data: 'description', title: 'Description' },
-              { data: 'eventName', title: 'Event' },
-              { data: 'groupName', title: 'Group' },
-              { data: 'createdAt', title: 'Created' },
-              { data: 'updatedAt', title: 'Updated' }
-            ],
-            tableData,
-            10
-          );
+                { data: 'wishName', title: 'Wish Name' },
+                { data: 'description', title: 'Description' },
+                { data: 'eventName', title: 'Event' },
+                { data: 'groupName', title: 'Group' },
+                { data: 'createdAt', title: 'Created' },
+                { data: 'updatedAt', title: 'Updated' }
+              ],
+              tableData,
+              10
+            );
+            $('#wishlistTableWrapper').show();
+            $('#wishlistCardsWrapper').hide();
+          }
         });
       });
     }, function (xhr, status, error) {
-      console.error('Error fetching wishes:', error);
+      $('#wishlistCardsWrapper').hide();
+      $('#wishlistTableWrapper').hide();
+      toastr.error('Error fetching wishes.');
     });
   },
 
@@ -172,9 +206,9 @@ let WishService = {
         WishService.getAllWishes();
       },
       error: function (xhr) {
+        $.unblockUI(); 
         let msg = xhr?.responseJSON?.error || xhr?.responseJSON?.message || 'Error editing wish';
         toastr.error(msg);
-        $.unblockUI();
       }
     });
   },
@@ -193,10 +227,12 @@ let WishService = {
     let wishId = $('#delete_wish_id').val();
     RestClient.delete('wishes/' + wishId, null, function (response) {
       WishService.closeModal();
+      $('.modal').modal('hide'); 
       toastr.success(response.message);
       WishService.getAllWishes();
     }, function (response) {
       WishService.closeModal();
+      $('.modal').modal('hide');
       toastr.error(response.message);
     });
   },

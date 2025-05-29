@@ -1,26 +1,21 @@
 <section id="groups" class="container mt-5">
-    <div class="container mt-5">
-        <h2 class="text-center">Group List</h2>
-
-          <!-- citat-->
-          <p class="text-center mb-4 fs-4 fst-italic text-muted">
+    <div class="container mt-5 mb-4 p-4 rounded-4 shadow-sm bg-white position-relative" style="max-width:900px;">
+        <div class="position-absolute top-0 end-0 m-3 d-none d-md-block">
+            <i class="bi bi-people display-3 text-primary opacity-25"></i>
+        </div>
+        <h2 class="text-center fw-bold mb-2" style="color:#4e54c8;">Group List</h2>
+        <p class="text-center mb-3 fs-5 fst-italic text-muted">
             "Alone we can do so little; together we can do so much." – Helen Keller
         </p>
-
-        <!-- opis o grupama u aplikaciji -->
-        <div class="text-center mb-5">
-            <p class="fs-5">
-                <strong>Welcome to the Groups section!</strong> Here, you can create and manage your own groups!
-                Whether it's a family event, a birthday party, or a project, create a group and start collaborating today!
-            </p>
-            <p class="fs-5">
-                <strong>What can you do with Groups?</strong>
+        <div class="text-center mb-4">
+            <p class="fs-5 mb-2">
+                <strong>Welcome to the Groups section!</strong> Here, you can create and manage your own groups! Whether it's a family event, a birthday party, or a project, create a group and start collaborating today!
             </p>
             <div class="row justify-content-center">
                 <div class="col-lg-8">
-                    <ul class="list-group fs-5 text-start">
-                        <li class="list-group-item"><i class="bi bi-person-plus text-success"></i> Create a new group for your event or project</li>
-                        <li class="list-group-item"><i class="bi bi-archive text-danger"></i> Delete a group if it is no longer needed</li>
+                    <ul class="list-group fs-5 text-start bg-light rounded-3 shadow-sm">
+                        <li class="list-group-item border-0"><i class="bi bi-person-plus text-success me-2"></i> Create a new group for your event or project</li>
+                        <li class="list-group-item border-0"><i class="bi bi-archive text-danger me-2"></i> Delete a group if it is no longer needed</li>
                     </ul>
                 </div>
             </div>
@@ -130,11 +125,55 @@
      </div>
    </div>
 
-   <!-- Table for groups -->
-   <div class="table-responsive">
-     <table id="groups-table"></table>
+   <!-- Wrappers for card and table views -->
+   <div id="groupsCardsWrapper" class="row row-cols-1 row-cols-md-3 g-4 mb-4" style="display:none"></div>
+   <div id="groupsTableWrapper" class="table-responsive">
+       <table id="groups-table"></table>
    </div>
-
+        <style>
+            #groupsCardsWrapper .card {
+                border-radius: 1rem;
+                border: none;
+                box-shadow: 0 2px 16px 0 rgba(78,84,200,0.10);
+                transition: transform 0.15s;
+            }
+            #groupsCardsWrapper .card:hover {
+                transform: translateY(-5px) scale(1.03);
+                box-shadow: 0 4px 24px 0 rgba(78,84,200,0.18);
+            }
+            #groupsCardsWrapper .card-title {
+                color: #4e54c8;
+                font-weight: 600;
+            }
+            #groupsCardsWrapper .card-text strong {
+                color: #8f94fb;
+            }
+            #groups-table {
+    border-radius: 1rem;
+    overflow: hidden;
+    background: #fff;
+    box-shadow: 0 2px 16px 0 rgba(78,84,200,0.08);
+    font-size: 1.08rem;
+}
+#groups-table thead {
+    background: linear-gradient(90deg, #4e54c8 0%, #8f94fb 100%);
+    color: #fff;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+#groups-table tbody tr {
+    transition: background 0.15s;
+}
+#groups-table tbody tr:hover {
+    background: #f3f5ff;
+}
+#groups-table td {
+    vertical-align: middle;
+}
+#groups-table .form-check-input {
+    margin-top: 0;
+}
+        </style>
 </div>
 
 <script>

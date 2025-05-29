@@ -90,6 +90,7 @@ let EventService = {
       EventService.getAllEvents();
       EventService.closeModal();
     }, function (response) {
+      $.unblockUI(); 
       EventService.closeModal();
       let msg = response?.responseJSON?.error || response?.responseJSON?.message || 'Error adding event';
       toastr.error(msg);
@@ -97,35 +98,68 @@ let EventService = {
   },
 
   getAllEvents: function () {
+    // Hide both wrappers before rendering
+    $('#eventsCardsWrapper').hide().empty();
+    $('#eventsTableWrapper').hide();
     RestClient.get("events", function (data) {
-      let tableData = data.map(event => ({
-        ...event,
-        isCanceled: event.isCanceled ? 'Yes' : 'No'
-      }));
-      Utils.datatable(
-        'eventsTable',
-        [
-          {
-            data: null,
-            title: '',
-            render: function (data, type, row, meta) {
-              return `<input type="radio" name="event-select" value="${row.id}">`;
+      let role = localStorage.getItem('role') || (Utils.parseJwt(localStorage.getItem('user_token'))?.user?.role || '').toUpperCase();
+      if (role === 'USER') {
+        // Render cards for USER
+        let cardsHtml = '';
+        if (data.length === 0) {
+          cardsHtml = '<div class="col"><div class="alert alert-info">No events found.</div></div>';
+        } else {
+          cardsHtml = data.map(event => `
+            <div class="col">
+              <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                  <h5 class="card-title">${event.eventName}</h5>
+                  <p class="card-text mb-1"><strong>Date:</strong> ${event.eventDate || ''}</p>
+                  <p class="card-text mb-1"><strong>Description:</strong> ${event.description || ''}</p>
+                  <p class="card-text mb-1"><strong>Budget:</strong> ${event.budget || ''}</p>
+                  <p class="card-text mb-1"><strong>Is Canceled:</strong> ${event.isCanceled ? 'Yes' : 'No'}</p>
+                </div>
+              </div>
+            </div>
+          `).join('');
+        }
+        $('#eventsCardsWrapper').html(cardsHtml).show();
+        $('#eventsTableWrapper').hide();
+      } else {
+        // Render table for ADMIN
+        let tableData = data.map(event => ({
+          ...event,
+          isCanceled: event.isCanceled ? 'Yes' : 'No'
+        }));
+        Utils.datatable(
+          'eventsTable',
+          [
+            {
+              data: null,
+              title: '',
+              render: function (data, type, row, meta) {
+                return `<input type=\"radio\" name=\"event-select\" value=\"${row.id}\">`;
+              },
+              orderable: false,
+              searchable: false,
+              width: "20px",
             },
-            orderable: false,
-            searchable: false,
-            width: "20px",
-          },
-          { data: 'eventName', title: 'Event Name' },
-          { data: 'eventDate', title: 'Date' },
-          { data: 'description', title: 'Description' },
-          { data: 'budget', title: 'Budget' },
-          { data: 'isCanceled', title: 'Is Canceled' }
-        ],
-        tableData,
-        10
-      );
+            { data: 'eventName', title: 'Event Name' },
+            { data: 'eventDate', title: 'Date' },
+            { data: 'description', title: 'Description' },
+            { data: 'budget', title: 'Budget' },
+            { data: 'isCanceled', title: 'Is Canceled' }
+          ],
+          tableData,
+          10
+        );
+        $('#eventsTableWrapper').show();
+        $('#eventsCardsWrapper').hide();
+      }
     }, function (xhr, status, error) {
-      console.error('Error fetching events:', error);
+      $('#eventsCardsWrapper').hide();
+      $('#eventsTableWrapper').hide();
+      toastr.error('Error fetching events.');
     });
   },
 
@@ -168,9 +202,9 @@ let EventService = {
         EventService.getAllEvents();
       },
       error: function (xhr) {
+        $.unblockUI(); // Always unblock on error
         let msg = xhr?.responseJSON?.error || xhr?.responseJSON?.message || 'Error editing event';
         toastr.error(msg);
-        $.unblockUI();
       }
     });
   },
@@ -189,10 +223,12 @@ let EventService = {
     let eventId = $('#delete_event_id').val();
     RestClient.delete('events/' + eventId, null, function (response) {
       EventService.closeModal();
+      $('.modal').modal('hide'); 
       toastr.success(response.message);
       EventService.getAllEvents();
     }, function (response) {
       EventService.closeModal();
+      $('.modal').modal('hide'); 
       toastr.error(response.message);
     });
   },

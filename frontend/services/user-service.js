@@ -183,12 +183,14 @@ var UserService = {
             <li class="nav-item">
               <a class="nav-link fs-5" href="#" id="logoutButton">Logout</a>
             </li>`;
+            $("#menuTabs").html(nav);
           main = `
             <section id="home" data-load="home.html"></section>
             <section id="wishlist" data-load="wishlist.html"></section>
             <section id="groups" data-load="groups.html"></section>
             <section id="events" data-load="events.html"></section>
             <section id="profile" data-load="profile.html"></section>`;
+            $("#spapp").html(main);
           break;
         case Constants.ADMIN_ROLE:
           nav = `
@@ -210,12 +212,14 @@ var UserService = {
             <li class="nav-item">
               <a class="nav-link fs-5" href="#" id="logoutButton">Logout</a>
             </li>`;
+            $("#menuTabs").html(nav);
           main = `
             <section id="home" data-load="home.html"></section>
             <section id="wishlist" data-load="wishlist.html"></section>
             <section id="groups" data-load="groups.html"></section>
             <section id="events" data-load="events.html"></section>
             <section id="profile" data-load="profile.html"></section>`;
+            $("#spapp").html(main);
           break;
         default:
           UserService.logout();
