@@ -115,7 +115,7 @@ let WishService = {
       toastr.warning("Please select a wish to edit");
       return;
     }
-    // Do NOT open modal here!
+    // Only open modal if selected (done in getWishById)
     WishService.getWishById(selected.id);
   },
 
@@ -281,6 +281,7 @@ let WishService = {
       toastr.warning("Please select a wish to delete");
       return;
     }
+    // Only open modal if selected
     $('#deleteWishModal').modal('show');
     $('#delete_wish_id').val(selected.id);
   },

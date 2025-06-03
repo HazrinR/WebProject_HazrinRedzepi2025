@@ -23,7 +23,7 @@
         <div class="container">
             <!-- Buttons for events -->
             <button type="button" class="btn btn-info btn-md" data-bs-toggle="modal" data-bs-target="#addEventModal" onclick="EventService.openAddModal()">Add event</button>
-            <button type="button" class="btn btn-warning btn-md" data-bs-toggle="modal" data-bs-target="#editEventModal" onclick="EventService.openEditModal()">Edit event</button>
+            <button type="button" class="btn btn-warning btn-md" onclick="EventService.openEditModal()">Edit event</button>
             <button type="button" class="btn btn-danger btn-md" onclick="EventService.deleteSelectedEvents()">Delete selected event</button>
             <!-- Add Event Modal -->
             <div class="modal" id="addEventModal">
