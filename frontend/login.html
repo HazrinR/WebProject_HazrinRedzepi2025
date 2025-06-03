@@ -47,13 +47,13 @@
         <h2 class="fw-bold mb-2" style="color:#4e54c8;">Login</h2>
         <p class="text-muted">Welcome back! Please login to your account.</p>
       </div>
-      <form id="login-form" action="#" method="POST">
+      <form id="login-form" action="#" method="POST" novalidate>
                <div class="form-floating mb-3">
-                 <input class="form-control" id="email" type="email" name="email" placeholder="Enter your email" required>
+                 <input class="form-control" id="email" type="email" name="email" placeholder="Enter your email" required autocomplete="username">
                  <label for="email">Email</label>
                </div>
                <div class="form-floating mb-3">
-                 <input class="form-control" id="password" type="password" name="password" placeholder="Enter your password" required>
+                 <input class="form-control" id="password" type="password" name="password" placeholder="Enter your password" required minlength="6" maxlength="50" autocomplete="current-password">
                  <label for="password">Password</label>
                </div>
                <div class="d-grid">

@@ -20,6 +20,98 @@
     </div>
 </section>
 
+<!-- Admin user management section (only visible for ADMIN) -->
+<div id="adminUserSection" class="mt-5" style="display:none; max-width: 900px; margin: 0 auto;">
+    <div class="card shadow border-0 mb-4">
+        <div class="card-header bg-gradient-primary text-white d-flex justify-content-between align-items-center" style="background: linear-gradient(90deg, #4e54c8 0%, #8f94fb 100%);">
+            <span><i class="bi bi-people me-2"></i>All Users</span>
+            <div>
+                <button class="btn btn-info btn-md me-2" id="addUserBtn"><i class="bi bi-person-plus"></i> Add User</button>
+                <button class="btn btn-warning btn-md me-2" id="editUserBtn"><i class="bi bi-pencil-square"></i> Edit User</button>
+                <button class="btn btn-danger btn-md me-2" id="deleteUserBtn"><i class="bi bi-person-dash"></i> Delete Selected</button>
+            </div>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table id="users-table" class="table table-striped table-bordered mb-0"></table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add/Edit User Modal -->
+<div class="modal" id="addEditUserModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="addEditUserForm">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addEditUserModalTitle">Add User</h5>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="editUserId" name="id">
+                    <div class="form-group mb-2">
+                        <label for="addFirstName">First Name:</label>
+                        <input type="text" class="form-control" id="addFirstName" name="firstName" required minlength="2" maxlength="30" autocomplete="given-name" pattern="[A-Za-zčćžšđČĆŽŠĐ ]+">
+                    </div>
+                    <div class="form-group mb-2">
+                        <label for="addLastName">Last Name:</label>
+                        <input type="text" class="form-control" id="addLastName" name="lastName" required minlength="2" maxlength="30" autocomplete="family-name" pattern="[A-Za-zčćžšđČĆŽŠĐ ]+">
+                    </div>
+                    <div class="form-group mb-2">
+                        <label for="addAge">Age:</label>
+                        <input type="number" class="form-control" id="addAge" name="age" min="18" max="100" required>
+                    </div>
+                    <div class="form-group mb-2">
+                        <label for="addEmail">Email:</label>
+                        <input type="email" class="form-control" id="addEmail" name="email" required autocomplete="email">
+                    </div>
+                    <div class="form-group mb-2">
+                        <label for="addPassword">Password:</label>
+                        <input type="password" class="form-control" id="addPassword" name="password" minlength="6" maxlength="50" autocomplete="new-password" pattern="^(?=.*[A-Za-z])(?=.*\d).{6,}$">
+                        <small id="passwordHelp" class="form-text text-muted">Leave blank to keep current password (edit mode).</small>
+                    </div>
+                    <div class="form-group mb-2">
+                        <label for="addRole">Role:</label>
+                        <select class="form-control" id="addRole" name="role" required>
+                            <option value="USER">User</option>
+                            <option value="ADMIN">Admin</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary" id="addEditUserSubmitBtn">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+#users-table {
+    border-radius: 1rem;
+    overflow: hidden;
+    background: #fff;
+    box-shadow: 0 2px 16px 0 rgba(78,84,200,0.08);
+    font-size: 1.08rem;
+}
+#users-table thead {
+    background: linear-gradient(90deg, #4e54c8 0%, #8f94fb 100%);
+    color: #fff;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+#users-table tbody tr {
+    transition: background 0.15s;
+}
+#users-table tbody tr:hover {
+    background: #f3f5ff;
+}
+#users-table td {
+    vertical-align: middle;
+}
+</style>
+
 <script>
     // funkcija za dinamičko popunjavanje podataka
     function setUserInfo(firstName, lastName, age, email, role) {

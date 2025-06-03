@@ -37,7 +37,7 @@ Flight::route('GET /debug-headers', function() {
     ]);
 });
 
-// Middleware for route protection
+// Middleware for route protection- citav ovaj kod komentirati da bi radilo u swaggeru
 Flight::route('/*', function () {
    if(
        strpos(Flight::request()->url, '/auth/login') === 0 ||

@@ -15,12 +15,28 @@ let WishService = {
       }
     });
 
-    WishService.populateEventDropdown('#wishEventId');
-    WishService.populateGroupDropdown('#wishGroupId');
-    WishService.populateEventDropdown('#editWishEventId');
-    WishService.populateGroupDropdown('#editWishGroupId');
-
+    // Add Wish form validation
     $("#addWishForm").validate({
+      rules: {
+        wishName: {
+          required: true,
+          minlength: 2,
+          maxlength: 50
+        },
+        wishDescription: {
+          maxlength: 200
+        }
+      },
+      messages: {
+        wishName: {
+          required: "Wish name is required",
+          minlength: "Wish name must be at least 2 characters",
+          maxlength: "Wish name cannot exceed 50 characters"
+        },
+        wishDescription: {
+          maxlength: "Description cannot exceed 200 characters"
+        }
+      },
       submitHandler: function (form) {
         var wish = {
           wishName: $("#wishName").val(),
@@ -33,7 +49,28 @@ let WishService = {
       },
     });
 
+    // Edit Wish form validation
     $("#editWishForm").validate({
+      rules: {
+        wishName: {
+          required: true,
+          minlength: 2,
+          maxlength: 50
+        },
+        wishDescription: {
+          maxlength: 200
+        }
+      },
+      messages: {
+        wishName: {
+          required: "Wish name is required",
+          minlength: "Wish name must be at least 2 characters",
+          maxlength: "Wish name cannot exceed 50 characters"
+        },
+        wishDescription: {
+          maxlength: "Description cannot exceed 200 characters"
+        }
+      },
       submitHandler: function (form) {
         var wish = {
           wishName: $("#editWishName").val(),
@@ -45,6 +82,11 @@ let WishService = {
         WishService.editWish(id, wish);
       },
     });
+
+    WishService.populateEventDropdown('#wishEventId');
+    WishService.populateGroupDropdown('#wishGroupId');
+    WishService.populateEventDropdown('#editWishEventId');
+    WishService.populateGroupDropdown('#editWishGroupId');
 
     WishService.getAllWishes();
   },
@@ -73,8 +115,8 @@ let WishService = {
       toastr.warning("Please select a wish to edit");
       return;
     }
+    // Do NOT open modal here!
     WishService.getWishById(selected.id);
-    $('#editWishModal').modal('show');
   },
 
   closeModal: function () {
@@ -83,6 +125,16 @@ let WishService = {
   },
 
   addWish: function (wish) {
+    wish.wishName = (wish.wishName || '').trim();
+    wish.description = (wish.description || '').trim();
+    if (!wish.wishName || wish.wishName.length < 2 || wish.wishName.length > 50) {
+      toastr.error('Wish name is required (2-50 characters).');
+      return;
+    }
+    if (wish.description && wish.description.length > 200) {
+      toastr.error('Description can be max 200 characters.');
+      return;
+    }
     $.blockUI({ message: '<h3>Processing...</h3>' });
     RestClient.post('wishes', wish, function (response) {
       toastr.success("Wish added successfully");
@@ -98,7 +150,6 @@ let WishService = {
   },
 
   getAllWishes: function () {
-    // Uvek sakrij oba wrappera pre renderovanja
     $('#wishlistCardsWrapper').hide().empty();
     $('#wishlistTableWrapper').hide();
     RestClient.get("wishes", function (data) {
@@ -182,6 +233,7 @@ let WishService = {
       $('#editWishEventId').val(data.eventId);
       $('#editWishGroupId').val(data.groupId);
       $.unblockUI();
+      $('#editWishModal').modal('show'); // Modal opens only here
     }, function (xhr, status, error) {
       console.error('Error fetching wish data');
       $.unblockUI();
@@ -189,6 +241,16 @@ let WishService = {
   },
 
   editWish: function (id, wish) {
+    wish.wishName = (wish.wishName || '').trim();
+    wish.description = (wish.description || '').trim();
+    if (!wish.wishName || wish.wishName.length < 2 || wish.wishName.length > 50) {
+      toastr.error('Wish name is required (2-50 characters).');
+      return;
+    }
+    if (wish.description && wish.description.length > 200) {
+      toastr.error('Description can be max 200 characters.');
+      return;
+    }
     $.blockUI({ message: '<h3>Processing...</h3>' });
     $.ajax({
       url: Constants.PROJECT_BASE_URL + 'wishes/' + id,
@@ -206,7 +268,7 @@ let WishService = {
         WishService.getAllWishes();
       },
       error: function (xhr) {
-        $.unblockUI(); 
+        $.unblockUI(); // Always unblock on error
         let msg = xhr?.responseJSON?.error || xhr?.responseJSON?.message || 'Error editing wish';
         toastr.error(msg);
       }

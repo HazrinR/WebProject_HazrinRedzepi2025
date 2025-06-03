@@ -59,9 +59,10 @@ let EventService = {
       toastr.warning("Please select an event to edit");
       return;
     }
+    // Do NOT open modal here!
     EventService.getEventById(selected.id, function(event) {
       EventService.populateGroupDropdown('#editEventGroupId', event.groupId);
-      $('#editEventModal').modal('show');
+      // Modal opens only in getEventById
     });
   },
 
@@ -78,6 +79,26 @@ let EventService = {
   },
 
   addEvent: function (event) {
+    // Frontend validation
+    event.eventName = (event.eventName || '').trim();
+    event.eventDate = (event.eventDate || '').trim();
+    event.description = (event.description || '').trim();
+    if (!event.eventName || event.eventName.length < 2 || event.eventName.length > 50) {
+      toastr.error('Event name is required (2-50 characters).');
+      return;
+    }
+    if (!event.eventDate) {
+      toastr.error('Event date is required.');
+      return;
+    }
+    if (event.description && event.description.length > 200) {
+      toastr.error('Description can be max 200 characters.');
+      return;
+    }
+    if (event.budget && (isNaN(event.budget) || event.budget < 0 || event.budget > 1000000)) {
+      toastr.error('Budget must be between 0 and 1,000,000.');
+      return;
+    }
     event.groupId = parseInt($('#eventGroupId').val());
     let budgetVal = $('#eventBudget').val();
     event.budget = budgetVal !== '' ? parseFloat(budgetVal) : undefined;
@@ -173,6 +194,7 @@ let EventService = {
       $('#editEventForm').data('id', data.id);
       if(cb) cb(data);
       $.unblockUI();
+      $('#editEventModal').modal('show'); // Modal opens only here
     }, function (xhr, status, error) {
       console.error('Error fetching event data');
       $.unblockUI();
@@ -180,6 +202,26 @@ let EventService = {
   },
 
   editEvent: function (id, event) {
+    // Frontend validation
+    event.eventName = (event.eventName || '').trim();
+    event.eventDate = (event.eventDate || '').trim();
+    event.description = (event.description || '').trim();
+    if (!event.eventName || event.eventName.length < 2 || event.eventName.length > 50) {
+      toastr.error('Event name is required (2-50 characters).');
+      return;
+    }
+    if (!event.eventDate) {
+      toastr.error('Event date is required.');
+      return;
+    }
+    if (event.description && event.description.length > 200) {
+      toastr.error('Description can be max 200 characters.');
+      return;
+    }
+    if (event.budget && (isNaN(event.budget) || event.budget < 0 || event.budget > 1000000)) {
+      toastr.error('Budget must be between 0 and 1,000,000.');
+      return;
+    }
     event.groupId = parseInt($('#editEventGroupId').val());
     let budgetVal = $('#editEventBudget').val();
     event.budget = budgetVal !== '' ? parseFloat(budgetVal) : undefined;
