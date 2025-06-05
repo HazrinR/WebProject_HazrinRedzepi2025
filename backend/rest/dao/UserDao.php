@@ -21,11 +21,9 @@ class UserDao extends BaseDao {
     }
 
     public function authenticateUser($email, $password) {
-        $stmt = $this->connection->prepare("SELECT * FROM users WHERE email = :email AND password = :password");
-        $stmt->bindParam(':email', $email);
-        $stmt->bindParam(':password', $password);
-        $stmt->execute();
-        return $stmt->fetch();
+        // This method is insecure and should not be used for authentication!
+        // Use getByEmail and password_verify in the service layer instead.
+        throw new Exception('Direct password authentication is not supported. Use getByEmail and password_verify.');
     }
 }
 ?>
