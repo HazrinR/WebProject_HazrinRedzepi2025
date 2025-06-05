@@ -13,6 +13,10 @@
  */
 /**
  * @OA\Server(
+ *     url="https://monkfish-app-oksmf.ondigitalocean.app",
+ *     description="Production server for the Wishlist Project API"
+ * )
+ * @OA\Server(
  *     url="http://localhost/wishlist-project/backend",
  *     description="Local development server for the Wishlist Project API"
  * )
