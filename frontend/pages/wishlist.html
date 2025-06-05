@@ -24,8 +24,8 @@
         <div class="container">
             <!-- Buttons for wishes -->
             <button type="button" class="btn btn-info btn-md" data-bs-toggle="modal" data-bs-target="#addWishModal" onclick="WishService.openAddModal()" id="addWishBtn">Add wish</button>
-            <button type="button" class="btn btn-warning btn-md" data-bs-toggle="modal" data-bs-target="#editWishModal" onclick="WishService.openEditModal()" id="editWishBtn" >Edit wish</button>
-            <button type="button" class="btn btn-danger btn-md" onclick="WishService.deleteSelectedWishes()" id="deleteWishBtn" data-bs-toggle="modal" data-bs-target="#deleteWishModal" >Delete selected wish</button>
+            <button type="button" class="btn btn-warning btn-md" onclick="WishService.openEditModal()" id="editWishBtn">Edit wish</button>
+            <button type="button" class="btn btn-danger btn-md" onclick="WishService.deleteSelectedWishes()" id="deleteWishBtn">Delete selected wish</button>
             <!-- Add Wish Modal -->
             <div class="modal" id="addWishModal">
                 <div class="modal-dialog">
@@ -37,11 +37,11 @@
                             <div class="modal-body">
                                 <div class="form-group">
                                     <label for="wishName">Wish Name:</label>
-                                    <input type="text" class="form-control" id="wishName" name="wishName">
+                                    <input type="text" class="form-control" id="wishName" name="wishName" required minlength="2" maxlength="50" placeholder="Enter wish name">
                                 </div>
                                 <div class="form-group">
                                     <label for="wishDescription">Description:</label>
-                                    <textarea class="form-control" id="wishDescription" name="wishDescription"></textarea>
+                                    <textarea class="form-control" id="wishDescription" name="wishDescription" maxlength="200" placeholder="Enter description (optional)"></textarea>
                                 </div>
                                 <div class="form-group">
                                     <label for="wishEventId">Event:</label>
@@ -72,11 +72,11 @@
                                 <input type="text" id="edit_wish_id" name="id" required hidden />
                                 <div class="form-group">
                                     <label for="editWishName">Wish Name:</label>
-                                    <input type="text" class="form-control" id="editWishName" name="wishName">
+                                    <input type="text" class="form-control" id="editWishName" name="wishName" required minlength="2" maxlength="50" placeholder="Enter wish name">
                                 </div>
                                 <div class="form-group">
                                     <label for="editWishDescription">Description:</label>
-                                    <textarea class="form-control" id="editWishDescription" name="wishDescription"></textarea>
+                                    <textarea class="form-control" id="editWishDescription" name="wishDescription" maxlength="200" placeholder="Enter description (optional)"></textarea>
                                 </div>
                                 <div class="form-group">
                                     <label for="editWishEventId">Event:</label>

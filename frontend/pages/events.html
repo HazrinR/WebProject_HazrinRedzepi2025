@@ -1,4 +1,3 @@
-<section id="events" class="container mt-5">
     <div class="container mt-5 mb-4 p-4 rounded-4 shadow-sm bg-white position-relative" style="max-width:900px;">
         <div class="position-absolute top-0 end-0 m-3 d-none d-md-block">
             <i class="bi bi-calendar-event display-3 text-primary opacity-25"></i>
@@ -24,7 +23,7 @@
         <div class="container">
             <!-- Buttons for events -->
             <button type="button" class="btn btn-info btn-md" data-bs-toggle="modal" data-bs-target="#addEventModal" onclick="EventService.openAddModal()">Add event</button>
-            <button type="button" class="btn btn-warning btn-md" data-bs-toggle="modal" data-bs-target="#editEventModal" onclick="EventService.openEditModal()">Edit event</button>
+            <button type="button" class="btn btn-warning btn-md" onclick="EventService.openEditModal()">Edit event</button>
             <button type="button" class="btn btn-danger btn-md" onclick="EventService.deleteSelectedEvents()">Delete selected event</button>
             <!-- Add Event Modal -->
             <div class="modal" id="addEventModal">
@@ -37,19 +36,19 @@
                             <div class="modal-body">
                                 <div class="form-group">
                                     <label for="eventName">Event Name:</label>
-                                    <input type="text" class="form-control" id="eventName" name="eventName">
+                                    <input type="text" class="form-control" id="eventName" name="eventName" required minlength="2" maxlength="50" placeholder="Enter event name">
                                 </div>
                                 <div class="form-group">
                                     <label for="eventDate">Date:</label>
-                                    <input type="date" class="form-control" id="eventDate" name="eventDate">
+                                    <input type="date" class="form-control" id="eventDate" name="eventDate" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="eventDescription">Description:</label>
-                                    <textarea class="form-control" id="eventDescription" name="description"></textarea>
+                                    <textarea class="form-control" id="eventDescription" name="description" maxlength="200" placeholder="Enter description (optional)"></textarea>
                                 </div>
                                 <div class="form-group">
                                     <label for="eventBudget">Budget:</label>
-                                    <input type="number" class="form-control" id="eventBudget" name="budget">
+                                    <input type="number" class="form-control" id="eventBudget" name="budget" min="0" max="1000000" step="1" placeholder="Enter budget (optional)">
                                 </div>
                                 <div class="form-group">
                                     <label for="eventGroupId">Group:</label>
@@ -80,19 +79,19 @@
                                 <input type="text" id="edit_event_id" name="id" required hidden />
                                 <div class="form-group">
                                     <label for="editEventName">Event Name:</label>
-                                    <input type="text" class="form-control" id="editEventName" name="eventName">
+                                    <input type="text" class="form-control" id="editEventName" name="eventName" required minlength="2" maxlength="50" placeholder="Enter event name">
                                 </div>
                                 <div class="form-group">
                                     <label for="editEventDate">Date:</label>
-                                    <input type="date" class="form-control" id="editEventDate" name="eventDate">
+                                    <input type="date" class="form-control" id="editEventDate" name="eventDate" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="editEventDescription">Description:</label>
-                                    <textarea class="form-control" id="editEventDescription" name="description"></textarea>
+                                    <textarea class="form-control" id="editEventDescription" name="description" maxlength="200" placeholder="Enter description (optional)"></textarea>
                                 </div>
                                 <div class="form-group">
                                     <label for="editEventBudget">Budget:</label>
-                                    <input type="number" class="form-control" id="editEventBudget" name="budget">
+                                    <input type="number" class="form-control" id="editEventBudget" name="budget" min="0" max="1000000" step="1" placeholder="Enter budget (optional)">
                                 </div>
                                 <div class="form-group">
                                     <label for="editEventGroupId">Group:</label>
@@ -141,7 +140,6 @@
 <script>
    EventService.init();
 </script>
-</section>
 <style>
     #eventsCardsWrapper .card {
         border-radius: 1rem;

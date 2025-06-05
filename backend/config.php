@@ -5,27 +5,31 @@ error_reporting(E_ALL ^ (E_NOTICE | E_DEPRECATED));
 
 class Config {
     public static function DB_NAME() {
-        return 'wishlist_project';
+        return Config::get_env("DB_NAME", "wishlist_project");
     }
 
     public static function DB_PORT() {
-        return 3306;
+        return Config::get_env("DB_PORT", 3306);
     }
 
     public static function DB_USER() {
-        return 'root';
+        return Config::get_env("DB_USER", "root");
     }
 
     public static function DB_PASSWORD() {
-        return '';
+        return Config::get_env("DB_PASSWORD", "");
     }
 
     public static function DB_HOST() {
-        return '127.0.0.1';
+        return Config::get_env("DB_HOST", "127.0.0.1");
     }
 
     public static function JWT_SECRET() {
-        return 'TpQjZ0EiX0NQ948QXKuBo3s7wHXnIWpv';
+        return Config::get_env("JWT_SECRET", "TpQjZ0EiX0NQ948QXKuBo3s7wHXnIWpv");
+    }
+
+    public static function get_env($name, $default){
+        return isset($_ENV[$name]) && trim($_ENV[$name]) != "" ? $_ENV[$name] : $default;
     }
 }
 

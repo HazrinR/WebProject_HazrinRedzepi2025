@@ -39,9 +39,14 @@ class UserService extends BaseService {
         if ($data['age'] < 18 || $data['age'] > 100) {
             throw new Exception('User age must be between 18 and 100.');
         }
+        if (strlen($data['password']) < 6 || strlen($data['password']) > 50) {
+            throw new Exception('Password must be between 6 and 50 characters.');
+        }
         if (!preg_match('/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/', $data['password'])) {
             throw new Exception('Password must be at least 6 characters long and include at least one letter and one number.');
         }
+        // Hash the password before saving
+        $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
         return $this->dao->insert($data);
     }
 
@@ -64,8 +69,12 @@ class UserService extends BaseService {
         if (isset($data['age']) && ($data['age'] < 18 || $data['age'] > 100)) {
             throw new Exception('User age must be between 18 and 100.');
         }
-        if (isset($data['password']) && !preg_match('/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/', $data['password'])) {
-            throw new Exception('Password must be at least 6 characters long and include at least one letter and one number.');
+        if (isset($data['password'])) {
+            if (!preg_match('/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/', $data['password'])) {
+                throw new Exception('Password must be at least 6 characters long and include at least one letter and one number.');
+            }
+            // Hash the password before saving
+            $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
         }
         return $this->dao->update($id, $data);
     }
@@ -90,6 +99,15 @@ class UserService extends BaseService {
     }
 
     public function authenticateUser($email, $password) {
+        if (empty($email) || empty($password)) {
+            throw new Exception('Email and password are required.');
+        }
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            throw new Exception('Invalid email format.');
+        }
+        if (strlen($password) < 6 || strlen($password) > 50) {
+            throw new Exception('Password must be between 6 and 50 characters.');
+        }
         return $this->dao->authenticateUser($email, $password);
     }
 }

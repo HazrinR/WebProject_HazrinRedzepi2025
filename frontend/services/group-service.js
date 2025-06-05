@@ -1,6 +1,5 @@
 let GroupService = {
   init: function () {
-  $(document).ready(function () {
     if (window.location.hash === '#groups' || window.location.pathname.endsWith('groups.html')) {
       const token = localStorage.getItem('user_token');
       let user = null;
@@ -17,25 +16,67 @@ let GroupService = {
         $("#groups .btn-info, #groups .btn-warning, #groups .btn-danger").show();
       }
     }
+ 
+
+  // Add form validation
+  $("#addGroupForm").validate({
+    rules: {
+      name: {
+        required: true,
+        minlength: 2,
+        maxlength: 50
+      },
+      description: {
+        maxlength: 200
+      }
+    },
+    messages: {
+      name: {
+        required: "Group name is required",
+        minlength: "Group name must be at least 2 characters",
+        maxlength: "Group name cannot exceed 50 characters"
+      },
+      description: {
+        maxlength: "Description cannot exceed 200 characters"
+      }
+    },
+    submitHandler: function (form) {
+      var group = Object.fromEntries(new FormData(form).entries());
+      GroupService.addGroup(group);
+      form.reset();
+    },
   });
 
-    $("#addGroupForm").validate({
-      submitHandler: function (form) {
-        var group = Object.fromEntries(new FormData(form).entries());
-        GroupService.addGroup(group);
-        form.reset();
+  // Edit form validation
+  $("#editGroupForm").validate({
+    rules: {
+      name: {
+        required: true,
+        minlength: 2,
+        maxlength: 50
       },
-    });
-
-    $("#editGroupForm").validate({
-      submitHandler: function (form) {
-        var group = Object.fromEntries(new FormData(form).entries());
-        GroupService.editGroup(group);
+      description: {
+        maxlength: 200
+      }
+    },
+    messages: {
+      name: {
+        required: "Group name is required",
+        minlength: "Group name must be at least 2 characters",
+        maxlength: "Group name cannot exceed 50 characters"
       },
-    });
+      description: {
+        maxlength: "Description cannot exceed 200 characters"
+      }
+    },
+    submitHandler: function (form) {
+      var group = Object.fromEntries(new FormData(form).entries());
+      GroupService.editGroup(group);
+    },
+  });
 
-    GroupService.getAllGroups();
-  },
+  GroupService.getAllGroups();
+},
 
   openAddModal: function () {
     $('#addGroupModal').modal('show');
@@ -47,9 +88,8 @@ let GroupService = {
       toastr.warning("Please select a group to edit");
       return;
     }
-
+    // Do NOT open modal here!
     GroupService.getGroupById(selected.id);
-    $('#editGroupModal').modal('show');
   },
 
   closeModal: function () {
@@ -58,6 +98,16 @@ let GroupService = {
   },
 
   addGroup: function (group) {
+    group.name = (group.name || '').trim();
+    group.description = (group.description || '').trim();
+    if (!group.name || group.name.length < 2 || group.name.length > 50) {
+      toastr.error('Group name is required (2-50 characters).');
+      return;
+    }
+    if (group.description && group.description.length > 200) {
+      toastr.error('Description can be max 200 characters.');
+      return;
+    }
     $.blockUI({ message: '<h3>Processing...</h3>' });
     RestClient.post('groups', group, function (response) {
       toastr.success("Group added successfully");
@@ -133,6 +183,7 @@ let GroupService = {
       $('#edit_group_name').val(data.name);
       $('#edit_group_description').val(data.description);
       $.unblockUI();
+      $('#editGroupModal').modal('show'); // Modal opens only here
     }, function (xhr, status, error) {
       console.error('Error fetching group data');
       $.unblockUI();
@@ -140,6 +191,16 @@ let GroupService = {
   },
 
   editGroup: function (group) {
+    group.name = (group.name || '').trim();
+    group.description = (group.description || '').trim();
+    if (!group.name || group.name.length < 2 || group.name.length > 50) {
+      toastr.error('Group name is required (2-50 characters).');
+      return;
+    }
+    if (group.description && group.description.length > 200) {
+      toastr.error('Description can be max 200 characters.');
+      return;
+    }
     $.blockUI({ message: '<h3>Processing...</h3>' });
     $.ajax({
       url: Constants.PROJECT_BASE_URL + 'groups/' + group.id,
