@@ -51,6 +51,12 @@ class EventService extends BaseService {
             }
         }
 
+        if (isset($data['isCanceled'])) {
+            $data['isCanceled'] = $data['isCanceled'] ? 1 : 0;
+        } else {
+            $data['isCanceled'] = 0;
+        }
+
         return $this->dao->insert($data);
     }
 
@@ -73,6 +79,9 @@ class EventService extends BaseService {
         }
         if (isset($data['budget']) && $data['budget'] <= 0) {
             throw new Exception('Budget must be greater than 0.');
+        }
+        if (isset($data['isCanceled'])) {
+            $data['isCanceled'] = $data['isCanceled'] ? 1 : 0;
         }
         return $this->dao->update($id, $data);
     }
